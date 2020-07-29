@@ -2,22 +2,28 @@ import csv
 import pygame
 from reportlab.pdfgen.canvas import Canvas
 class text_box(pygame.sprite.Sprite):
-    def __init__(self, x,y,w,h):
-        self.input = pygame.Rect(x,y,w,h)
+    def __init__(self, x,y,w,h, text):
+        self.y = y
+        self.input = pygame.Rect(x,self.y,w,h)
+        self.h = h
+        self.w = w
         self.color_i = (0,0,0)
         self.color_a = (255,255,255)
         self.color = self.color_i
         self.active = False
-        self.text = ""
+        self.text = text
         self.txt = None
 
-    def update(self,screen,cursor):
+    def update(self,screen,cursor, dynamic, y):
+        self.input.y = y
         font = pygame.font.Font("times.ttf", 20)
         self.txt = font.render(self.text, True, (0,0,0))
-        width = max(100, self.txt.get_width()+10)
-        self.input.w = width
+        if dynamic:
+            width = max(100, self.txt.get_width()+10)
+            self.input.w = width
         pygame.draw.rect(screen, self.color, self.input, 1)
         screen.blit(self.txt, (self.input.x+2, self.input.y+1))
+        
     def text_update(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.input.collidepoint(event.pos):
@@ -33,9 +39,52 @@ class text_box(pygame.sprite.Sprite):
                     self.text = self.text[:-1]
                 else:
                     self.text += event.unicode
+                    
     def get_text(self):
         return self.text
-        
+
+class text_group(pygame.sprite.Sprite):
+    def __init__(self, x,y,w,h, text):
+        pygame.sprite.Sprite.__init__(self)
+        self.y = y
+        self.input = pygame.Rect(x,self.y,w,h)
+        self.h = h
+        self.w = w
+        self.color_i = (0,0,0)
+        self.color_a = (255,255,255)
+        self.color = self.color_i
+        self.active = False
+        self.text = text
+        self.txt = None
+
+    def update(self,screen,cursor, dynamic, event):
+        font = pygame.font.Font("times.ttf", 20)
+        self.txt = font.render(self.text, True, (0,0,0))
+        if dynamic:
+            width = max(150, self.txt.get_width()+10)
+            self.input.w = width
+        pygame.draw.rect(screen, self.color, self.input, 1)
+        screen.blit(self.txt, (self.input.x+2, self.input.y+1))
+        if event != None:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.input.collidepoint(event.pos):
+                    # Set the value of the variable
+                    self.active= not self.active
+                else:
+                    self.active = False
+                #Set the current color of the box
+                self.color = self.color_a if self.active else self.color_i
+            if event.type == pygame.KEYDOWN:
+                if self.active:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.text = self.text[:-1]
+                    else:
+                        self.text += event.unicode
+                    
+    def get_text(self):
+        return self.text
+
+    
 class pdf:
     def __init__(self, name, logo):
         self.text = None
