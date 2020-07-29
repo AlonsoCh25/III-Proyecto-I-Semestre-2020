@@ -1,5 +1,65 @@
 import csv
 import pygame
+from reportlab.pdfgen.canvas import Canvas
+class text_box(pygame.sprite.Sprite):
+    def __init__(self, x,y,w,h):
+        self.input = pygame.Rect(x,y,w,h)
+        self.color_i = (0,0,0)
+        self.color_a = (255,255,255)
+        self.color = self.color_i
+        self.active = False
+        self.text = ""
+        self.txt = None
+
+    def update(self,screen,cursor):
+        font = pygame.font.Font("times.ttf", 20)
+        self.txt = font.render(self.text, True, (0,0,0))
+        width = max(100, self.txt.get_width()+10)
+        self.input.w = width
+        pygame.draw.rect(screen, self.color, self.input, 1)
+        screen.blit(self.txt, (self.input.x+2, self.input.y+1))
+    def text_update(self,event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.input.collidepoint(event.pos):
+                # Set the value of the variable
+                self.active= not self.active
+            else:
+                self.active = False
+            #Set the current color of the box
+            self.color = self.color_a if self.active else self.color_i
+        if event.type == pygame.KEYDOWN:
+            if self.active:
+                if event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+    def get_text(self):
+        return self.text
+        
+class pdf:
+    def __init__(self, name, logo):
+        self.text = None
+        self.name = name
+        self.canvas = Canvas(self.name + ".pdf")
+        self.logo = logo
+        
+    def write_string(self,txt,x,y, font,size):
+        self.canvas.setFont(font, size)
+        if self.logo == "logo.png":
+            self.canvas.drawImage(self.logo,150, 600, mask = "auto")
+        self.canvas.drawString(x,y,txt)
+
+    def write_text(self,txt,x,y, font,size):
+        self.canvas.setFont(font, size)
+        self.text = self.canvas.beginText(x,y)
+        self.text.setFont(font, size)
+        if self.logo == "logo.png":
+            self.canvas.drawImage(self.logo,150, 600, mask = "auto")
+        self.text.textLines(txt)
+        self.canvas.drawText(self.text)
+        
+    def save(self):
+        self.canvas.save()
 
 class csv_class:
     def __init__(self, archive, method):
