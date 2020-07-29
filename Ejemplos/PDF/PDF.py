@@ -4,6 +4,7 @@ from reportlab.pdfgen.canvas import Canvas
 import pygame
 from CLASSES import *
 from datetime import datetime
+import numpy as np
 
 ##La parte superior en y es 800
 ##El limite izquierdo en y es 50
@@ -11,19 +12,47 @@ from datetime import datetime
 box_group = pygame.sprite.Group()
 draw_m = True
 def draw_matrix(screen,y):
-    global box_group
+    global box_group, matrix
     #Matrix of the items
-    matrix = [["Item", "Quantity","Price","Amount"],[" "," "," "," "],[" "," "," "," "]]
     x = 0
+    row = 0
     box_group.empty()
     for line in matrix:
+        row +=1
+        colum = 0
         x = 0
         y += 30
         for element in line:
-            x += 150
-            box = text_group(x,y,140,30, element)
-            box_group.add(box)
+            if colum == 0:
+                colum += 1
+                x += 150
+                box = text_group(x,y,330,30, element, row-1, colum-1)
+                box_group.add(box)
+            else:
+                if colum == 1:
+                    colum += 1
+                    x += 330
+                    box = text_group(x,y,90,30, element, row-1, colum-1)
+                    box_group.add(box)
+                else:
+                    colum += 1
+                    x += 90
+                    box = text_group(x,y,90,30, element, row-1, colum-1)
+                    box_group.add(box)
             
+def eliminate_row_matrix(screen, B_y):
+    global matrix
+    m = []
+    for i in range(len(matrix)-1):
+        m += [matrix[i]]
+    matrix = m
+    draw_matrix(screen,B_y)
+        
+def add_row_matrix(screen, B_y):
+    global matrix
+    matrix += [[" "," "," "," "]]
+    draw_matrix(screen,B_y)
+    
 def make_invoice_window():
     global box_group
     #Settings of the screen
@@ -31,6 +60,7 @@ def make_invoice_window():
     weight, height = 952,768
     screen = pygame.display.set_mode((weight,height))
     scroll = 10
+    scroll_ = 30
     #List of the invoice numers
     archive_csv = csv_class("invoice num.csv","rt")
     matrix_csv = archive_csv.get_matrix()
@@ -48,6 +78,7 @@ def make_invoice_window():
     n_y = 400
     note_input = text_box(150,n_y,600,30, "[Add a note or instruction for your customer]")
     
+
     #Time
     now = datetime.now()
     now.date()
@@ -105,18 +136,35 @@ def make_invoice_window():
 
     D_date = "Due: "
     D_date = font.render(D_date, True, (0, 0, 0))
+
+    Sub = "Subtotal: "
+    Sub = font.render(Sub, True, (0, 0, 0))
+
+    Tax = "Tax: "
+    Tax = font.render(Tax, True, (0, 0, 0))
+    
     #Position in y of the blits
     Inv_y = 300
     C_y = 325
     E_y = 350
     L_y = 50
     B_y = 425
-
+    M_y = 600
+    l_y = 600
+    S_y = 575
+    T_y = 600
+    sub_input = text_box(660,S_y,90,25, "")
+    tax_input = text_box(660,T_y,90,25, "")
     #Draw the matrix
     draw_matrix(screen, B_y)
     #While of the loop
     exit_ = False
     while exit_ != True:
+        #Buttons dynamics
+        bt_more = Button(more,more_b,150,M_y,60,60)
+        bt_less = Button(less,less_b,205,l_y,60,60)
+        
+        
         
         clock.tick(60)
         cursor.update()
@@ -126,7 +174,9 @@ def make_invoice_window():
         #Update the text box
         due_input.update(screen,cursor, True, d_y)
         note_input.update(screen,cursor, False,n_y)
-        box_group.update(screen, cursor, True, None)
+        box_group.update(screen, cursor, False, None)
+        sub_input.update(screen,cursor,False,S_y)
+        tax_input.update(screen,cursor,False,T_y)
         
         
         #Blit the text
@@ -137,19 +187,26 @@ def make_invoice_window():
         screen.blit(Inv_n,(600,Inv_y))
         screen.blit(S_date,(600,C_y))
         screen.blit(D_date,(600,E_y))
+
+        screen.blit(Sub,(585,S_y))
+        screen.blit(Tax,(622,T_y))
         
         #Update Buttons
         bt_check.update(screen, cursor)
         bt_down.update(screen,cursor)
         bt_up.update(screen,cursor)
-
+        bt_more.update(screen,cursor)
+        bt_less.update(screen,cursor)
         #Update Display
         pygame.display.update()
         for event in pygame.event.get():
             #Update the text of the box
             due_input.text_update(event)
             note_input.text_update(event)
-            box_group.update(screen, cursor, True, event)
+            sub_input.text_update(event)
+            tax_input.text_update(event)
+            box_group.update(screen, cursor, False, event)
+            
             #box_group.text_update(event)
             if event.type == pygame.QUIT:
                 #Exit
@@ -167,6 +224,10 @@ def make_invoice_window():
                     E_y += scroll
                     L_y += scroll
                     B_y += scroll
+                    M_y += scroll
+                    l_y += scroll
+                    S_y += scroll
+                    T_y += scroll
                     draw_matrix(screen, B_y)
                 if cursor.colliderect(bt_up.rect):
                     d_y -= scroll
@@ -176,7 +237,33 @@ def make_invoice_window():
                     E_y -= scroll
                     L_y -= scroll
                     B_y -= scroll
+                    M_y -= scroll
+                    l_y -= scroll
+                    S_y -= scroll
+                    T_y -= scroll
                     draw_matrix(screen, B_y)
+                if cursor.colliderect(bt_more.rect):
+                    d_y -= scroll_
+                    n_y -= scroll_
+                    Inv_y -= scroll_
+                    C_y -= scroll_
+                    E_y -= scroll_
+                    L_y -= scroll_
+                    B_y -= scroll_
+                    #M_y -= scroll_
+                    #l_y -= scroll_
+                    add_row_matrix(screen, B_y)
+                if cursor.colliderect(bt_less.rect):
+                    d_y += scroll_
+                    n_y += scroll_
+                    Inv_y += scroll_
+                    C_y += scroll_
+                    E_y += scroll_
+                    L_y += scroll_
+                    B_y += scroll_
+                    #M_y += scroll_
+                    #l_y += scroll_
+                    eliminate_row_matrix(screen,B_y)
     pygame.quit()
     
 make_invoice_window()

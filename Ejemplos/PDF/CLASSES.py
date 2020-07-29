@@ -1,6 +1,7 @@
 import csv
 import pygame
 from reportlab.pdfgen.canvas import Canvas
+matrix = [["Item", "Quantity","Price","Amount"],[" "," "," "," "],[" "," "," "," "],[" "," "," "," "]]
 class text_box(pygame.sprite.Sprite):
     def __init__(self, x,y,w,h, text):
         self.y = y
@@ -44,8 +45,11 @@ class text_box(pygame.sprite.Sprite):
         return self.text
 
 class text_group(pygame.sprite.Sprite):
-    def __init__(self, x,y,w,h, text):
+    global matrix
+    def __init__(self, x,y,w,h, text, row, colum):
         pygame.sprite.Sprite.__init__(self)
+        self.row = row
+        self.colum = colum
         self.y = y
         self.input = pygame.Rect(x,self.y,w,h)
         self.h = h
@@ -78,8 +82,10 @@ class text_group(pygame.sprite.Sprite):
                 if self.active:
                     if event.key == pygame.K_BACKSPACE:
                         self.text = self.text[:-1]
+                        matrix[self.row][self.colum] = self.text
                     else:
                         self.text += event.unicode
+                        matrix[self.row][self.colum] = self.text
                     
     def get_text(self):
         return self.text
