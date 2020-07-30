@@ -1,7 +1,68 @@
 import csv
 import pygame
 from reportlab.pdfgen.canvas import Canvas
+from datetime import datetime
+colide = False
 matrix = [["Item", "Quantity","Price","Amount"],[" "," "," "," "],[" "," "," "," "],[" "," "," "," "]]
+class Cursor(pygame.Rect):
+    def __init__(self):
+        pygame.Rect.__init__(self, 0,0,1,1)
+    def update(self):
+        self.left, self.top = pygame.mouse.get_pos()
+    def rect(self):
+        a = pygame.Rect(self.left,self.top,1,1)
+        print(a)
+        return a
+
+#Class to create the buttons, require two images for animation
+class Button(pygame.sprite.Sprite):
+    def __init__(self, image1, image2, x, y,scale_x,scale_y):
+        pygame.sprite.Sprite.__init__(self)
+        self.scale_x = scale_x
+        self.scale_y = scale_y
+        self.image_normal = pygame.transform.scale(image1,(self.scale_x,self.scale_y))
+        self.image_select = pygame.transform.scale(image2,(self.scale_x,self.scale_y))
+        self.image_current = self.image_normal
+        self.rect = self.image_current.get_rect()
+        self.rect.left, self.rect.top = (x,y)
+    def update(self, screen, cursor):
+        if cursor.colliderect(self.rect):
+            self.image_current = self.image_select
+        else:
+            self.image_current = self.image_normal
+        #screen.blit(pygame.transform.scale(self.image_current,(self.scale_x,self.scale_y)),self.rect)
+        screen.blit(self.image_current,self.rect)
+        
+class csv_class:
+    def __init__(self, archive, method):
+        self.archive = self.read(archive, method)
+    #return the matrix in the csv
+    def read(self, archive, method):
+        f = open(archive, method)
+        data = csv.reader(f)
+        data = [row for row in data]
+        #Delete the empty spaces in the matrix
+        for i in data:
+            if i == []:
+                data.remove(i)
+        return data
+
+    #Modify the variable matrix
+    def write(self, matrix):
+        self.archive = matrix
+
+    #return the matrix in the csv
+    def get_matrix(self):
+        return self.archive
+
+    #Update the csv with the variable matrix
+    def update_matrix(self, archive, method):
+        a = self.archive
+        f = open(archive, method)
+        with f:
+            writer = csv.writer(f)
+            writer.writerows(a)
+            
 class text_box(pygame.sprite.Sprite):
     def __init__(self, x,y,w,h, text):
         self.y = y
@@ -46,7 +107,9 @@ class text_box(pygame.sprite.Sprite):
 
 class text_group(pygame.sprite.Sprite):
     global matrix
+    pygame.init()
     def __init__(self, x,y,w,h, text, row, colum):
+        pygame.init()
         pygame.sprite.Sprite.__init__(self)
         self.row = row
         self.colum = colum
@@ -60,8 +123,14 @@ class text_group(pygame.sprite.Sprite):
         self.active = False
         self.text = text
         self.txt = None
-
+        
     def update(self,screen,cursor, dynamic, event):
+        global colide
+        def return_():
+            colide = True
+            print(colide)
+            
+        pygame.init()
         font = pygame.font.Font("times.ttf", 20)
         self.txt = font.render(self.text, True, (0,0,0))
         if dynamic:
@@ -73,7 +142,11 @@ class text_group(pygame.sprite.Sprite):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.input.collidepoint(event.pos):
                     # Set the value of the variable
-                    self.active= not self.active
+                    if self.colum == 0:
+                        self.active= not self.active
+                        return_()
+                    else:
+                        self.active= not self.active
                 else:
                     self.active = False
                 #Set the current color of the box
@@ -86,6 +159,34 @@ class text_group(pygame.sprite.Sprite):
                     else:
                         self.text += event.unicode
                         matrix[self.row][self.colum] = self.text
+                    
+    def get_text(self):
+        return self.text
+
+class buttom_text(pygame.sprite.Sprite):
+    global matrix
+    def __init__(self, x,y,w,h, text, row):
+        pygame.sprite.Sprite.__init__(self)
+        self.y = y
+        self.input = pygame.Rect(x,self.y,w,h)
+        self.h = h
+        self.w = w
+        self.row = row
+        self.color_i = (0,0,0)
+        self.color_a = (255,255,255)
+        self.color = self.color_i
+        self.active = False
+        self.text = text
+        self.txt = None
+        self.font = pygame.font.Font("times.ttf", 20)
+    def update(self,screen,cursor, event,):
+        self.txt = self.font.render(self.text, True, (0,0,0))
+        pygame.draw.rect(screen, self.color, self.input, 1)
+        screen.blit(self.txt, (self.input.x+2, self.input.y+1))
+        if event!= None:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.input.collidepoint(event.pos):
+                    print(self.text)
                     
     def get_text(self):
         return self.text
@@ -116,36 +217,7 @@ class pdf:
     def save(self):
         self.canvas.save()
 
-class csv_class:
-    def __init__(self, archive, method):
-        self.archive = self.read(archive, method)
 
-    #return the matrix in the csv
-    def read(self, archive, method):
-        f = open(archive, method)
-        data = csv.reader(f)
-        data = [row for row in data]
-        #Delete the empty spaces in the matrix
-        for i in data:
-            if i == []:
-                data.remove(i)
-        return data
-
-    #Modify the variable matrix
-    def write(self, matrix):
-        self.archive = matrix
-
-    #return the matrix in the csv
-    def get_matrix(self):
-        return self.archive
-
-    #Update the csv with the variable matrix
-    def update_matrix(self, archive, method):
-        a = self.archive
-        f = open(archive, method)
-        with f:
-            writer = csv.writer(f)
-            writer.writerows(a)
 
 #load the csv
 #archive_csv = csv_class("ScoreBoard.csv","rt")
@@ -159,28 +231,4 @@ class csv_class:
 #First writes the variable and after saves the matrix in the csv
 
 #Class to know the position of the cursor
-class Cursor(pygame.Rect):
-    def __init__(self):
-        pygame.Rect.__init__(self, 0,0,1,1)
-    def update(self):
-        self.left, self.top = pygame.mouse.get_pos()
-
-#Class to create the buttons, require two images for animation
-class Button(pygame.sprite.Sprite):
-    def __init__(self, image1, image2, x, y,scale_x,scale_y):
-        pygame.sprite.Sprite.__init__(self)
-        self.scale_x = scale_x
-        self.scale_y = scale_y
-        self.image_normal = pygame.transform.scale(image1,(self.scale_x,self.scale_y))
-        self.image_select = pygame.transform.scale(image2,(self.scale_x,self.scale_y))
-        self.image_current = self.image_normal
-        self.rect = self.image_current.get_rect()
-        self.rect.left, self.rect.top = (x,y)
-    def update(self, screen, cursor):
-        if cursor.colliderect(self.rect):
-            self.image_current = self.image_select
-        else:
-            self.image_current = self.image_normal
-        #screen.blit(pygame.transform.scale(self.image_current,(self.scale_x,self.scale_y)),self.rect)
-        screen.blit(self.image_current,self.rect)
 

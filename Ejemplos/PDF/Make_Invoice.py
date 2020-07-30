@@ -5,12 +5,82 @@ import pygame
 from CLASSES import *
 from datetime import datetime
 import numpy as np
-
 ##La parte superior en y es 800
 ##El limite izquierdo en y es 50
 ##El limite derecho en y es 500
 box_group = pygame.sprite.Group()
-draw_m = True
+opt_group = pygame.sprite.Group()
+"""def show_services():
+    global matrix_csv, window_c, row_group
+    pygame.init()
+    archive_csv = csv_class("services.csv","rt")
+    
+    window_c = False
+    matrix_csv = archive_csv.get_matrix()
+    weight, height = 400,0
+    text = ""
+    b_group = pygame.sprite.Group()
+    y = 0
+    row_ = 0
+    b_group.empty()
+    for line in matrix_csv:
+        height += 25
+        cont = 0
+        for element in line:
+            if cont == 0:
+                text += element
+                text += " "
+            else:
+                text += "₡"
+                text += element
+            cont += 1
+        a = buttom_text(0,y,400,25, text,row_)
+        text = ""
+        row_ += 1
+        b_group.add(a)
+        y += 25
+        
+    print(text)
+    screen_show = pygame.display.set_mode((weight,height))
+    screen_show.fill((255,255,255))
+    #Set initial clock
+    clock = pygame.time.Clock()
+    
+    #Caption
+    pygame.display.set_caption("Services")
+    
+    #Time
+    now = datetime.now()
+    now.date()
+    #Create the buttons and cursor
+    cursor = Cursor()
+    
+    #While of the loop
+    exit_ = False
+    while exit_ != True:
+        if window_c:
+            make_invoice_window
+            #Exit
+            exit_ = True
+            pygame.quit()
+            #window_c = False
+            break
+            
+        screen_show.fill((255,255,255))
+        clock.tick(60)
+        cursor.update()
+        b_group.update(screen_show,cursor,None)
+        pygame.display.update()
+        for event in pygame.event.get():
+            b_group.update(screen_show,cursor,event)
+            if event.type == pygame.QUIT:
+                #Exit
+                exit_ = True
+                pygame.quit()
+                break
+    pygame.quit()"""
+    
+
 def draw_matrix(screen,y):
     global box_group, matrix
     #Matrix of the items
@@ -39,7 +109,36 @@ def draw_matrix(screen,y):
                     x += 90
                     box = text_group(x,y,90,30, element, row-1, colum-1)
                     box_group.add(box)
-            
+
+def draw_matrix_opt(screen,y):
+    global opt_group, matrix_csv
+    #Matrix of the items
+    x = 0
+    row = 0
+    opt_group.empty()
+    for line in matrix_csv:
+        row +=1
+        colum = 0
+        x = 0
+        y += 30
+        for element in line:
+            if colum == 0:
+                colum += 1
+                x += 150
+                box = text_group(x,y,330,30, element, row-1, colum-1)
+                opt_group.add(box)
+            else:
+                if colum == 1:
+                    colum += 1
+                    x += 330
+                    box = text_group(x,y,90,30, element, row-1, colum-1)
+                    opt_group.add(box)
+                else:
+                    colum += 1
+                    x += 90
+                    box = text_group(x,y,90,30, element, row-1, colum-1)
+                    opt_group.add(box)
+
 def eliminate_row_matrix(screen, B_y):
     global matrix
     m = []
@@ -52,9 +151,13 @@ def add_row_matrix(screen, B_y):
     global matrix
     matrix += [[" "," "," "," "]]
     draw_matrix(screen,B_y)
-    
+
+def create_pdf():
+    pass
+
+
 def make_invoice_window():
-    global box_group
+    global box_group, window_c
     #Settings of the screen
     pygame.init()
     weight, height = 952,768
@@ -163,8 +266,7 @@ def make_invoice_window():
         #Buttons dynamics
         bt_more = Button(more,more_b,150,M_y,60,60)
         bt_less = Button(less,less_b,205,l_y,60,60)
-        
-        
+        print
         
         clock.tick(60)
         cursor.update()
@@ -199,15 +301,19 @@ def make_invoice_window():
         bt_less.update(screen,cursor)
         #Update Display
         pygame.display.update()
+        global colide
+        print(colide)
         for event in pygame.event.get():
             #Update the text of the box
             due_input.text_update(event)
             note_input.text_update(event)
             sub_input.text_update(event)
             tax_input.text_update(event)
-            box_group.update(screen, cursor, False, event)
-            
-            #box_group.text_update(event)
+            #box_group.update(screen, cursor, False, event)
+            rect_group = box_group.update(screen, cursor, False, event)
+            if rect_group:
+                print("rect_group")
+            #print(rect_group)
             if event.type == pygame.QUIT:
                 #Exit
                 exit_ = True
@@ -267,3 +373,4 @@ def make_invoice_window():
     pygame.quit()
     
 make_invoice_window()
+#show_services()
