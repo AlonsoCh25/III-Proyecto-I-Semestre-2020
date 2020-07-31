@@ -154,7 +154,7 @@ def make_invoice_window():
             y -= 15
 
         n_pdf.write_string("    Subtotal " + sub_input.get_text(), 475,y-15,"times",12)
-        n_pdf.write_string(" Impuestos " + tax_input.get_text()+"%", 475,y-30,"times",12)
+        n_pdf.write_string("        Taxes " + tax_input.get_text()+"%", 475,y-30,"times",12)
         n_pdf.write_string("         Total " + total_input.get_text(), 475,y-45,"times",12)
         n_pdf.save()
         
