@@ -131,6 +131,7 @@ def make_invoice_window():
         n_pdf.write_string(C_addres, 50,545,"times",12)
         n_pdf.write_string("Ship To", 400,590,"timesb",12)
         n_pdf.write_string(C_name_, 400,575,"times",12)
+        n_pdf.write_string("San Jose-Costa Rica", 400,560,"times",12)
        
         colum = 0
         row_ = 0
