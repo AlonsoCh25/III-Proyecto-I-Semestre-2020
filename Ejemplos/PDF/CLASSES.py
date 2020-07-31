@@ -2,8 +2,10 @@ import csv
 import pygame
 from reportlab.pdfgen.canvas import Canvas
 from datetime import datetime
+
 colide = False
 matrix = [["Item", "Quantity","Price","Amount"],["","","",""],["","","",""],["","","",""]]
+
 
 class Cursor(pygame.Rect):
     def __init__(self):

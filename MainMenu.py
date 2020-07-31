@@ -2,8 +2,10 @@ import pygame
 from datetime import datetime
 from CLASSES import *
 
+
 #Creation of groups and cursor
 buttons = pygame.sprite.Group()
+buttons_servicesGroup = pygame.sprite.Group()
 cursor = Cursor()
 FPS = 60
 width, height = 900, 900
@@ -26,6 +28,10 @@ img_bt_exit1 = pygame.image.load("Images/bt_exit.png")
 img_bt_exit2 = pygame.image.load("Images/bt_exit2.png")
 '''img_bt_return1 = pygame.image.load("Images/bt_return.png")
 img_bt_return2 = pygame.image.load("Images/bt_return2.png")'''
+more = pygame.image.load("Images/more.png")
+more_b = pygame.image.load("Images/more_b.png")
+less = pygame.image.load("Images/less.png")
+less_b = pygame.image.load("Images/less_b.png")
 
 bt_createInvoice = Button(img_bt_createPDF1, img_bt_createPDF2, (width/4) + 50, 400, scale_x, scale_y)
 bt_manageInvoice = Button(img_bt_managerPDF1, img_bt_managerPDF2, (width/4) + 50 , 550, scale_x, scale_y)
@@ -35,6 +41,11 @@ bt_addUser = Button(img_bt_addUser1, img_bt_addUser2, (width/2) + 25, 550, scale
 bt_manageUser = Button(img_bt_manageUser1, img_bt_manageUser2, (width/2) + 25, 700, scale_x, scale_y)
 bt_exit = Button(img_bt_exit1, img_bt_exit2, width - 175, height - 100, scale_x, scale_y)
 buttons.add(bt_createInvoice, bt_manageInvoice, bt_report, bt_services, bt_addUser, bt_manageUser, bt_exit)
+
+#bt_return = Button(img_bt_return1, img_bt_return2, 0,0, scale_x, scale_y)
+bt_more = Button(more, more_b, 150, 100, 60, 60)
+bt_less = Button(less, less_b, 205, 100, 60, 60)
+buttons_servicesGroup.add(bt_more, bt_less)
 
 buttons_box = pygame.sprite.Group()
 buttons_services = []
@@ -47,14 +58,14 @@ show_services = False
 rect_select = None
 
 
-def draw_matrix_sinBotones(y):
-    global box_group, matrix
-    trans = pygame.image.load("Images/transparent.png")
-    #Matrix of the items
+def draw_matrix_services(y):
+    global box_group, matrix_services
+
+    #Matrix of the services
     x = 0
     row = 0
     box_group.empty()
-    for line in matrix:
+    for line in matrix_services:
         row +=1
         colum = 0
         x = 0
@@ -79,28 +90,21 @@ def draw_matrix_sinBotones(y):
                         box_group.add(box)
 
 def services_window():
-    global FPS, cursor, width, height, buttons_box, buttons_, buttons_box, matrix
+    global FPS, cursor, width, height, buttons_box, buttons_, buttons_box, matrix_services
+
     pygame.init()
-    #Set initial clock
-    
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Services Window")
     clock = pygame.time.Clock()
     background = pygame.image.load("Images/background.png")
     background = pygame.transform.scale(background, (width, height))
 
-    #bt_return = Button(img_bt_return1, img_bt_return2, 0,0, scale_x, scale_y)
-    draw_matrix_sinBotones(425)
+    draw_matrix_services(425)
+    service_box = text_box(150, 395, 330, 30, "Services")
+    cost_box = text_box(480, 395, 90, 30, "Cost")
 
     exit_ = False
     while exit_ != True:
-        clock.tick(60)
-        cursor.update()
-        screen.blit(background, (0, 0))
-        box_group.update(screen, cursor, False, None)
-        pygame.display.update()
-        
-        
         for event in pygame.event.get():
             box_group.update(screen, cursor, False, event)
             
@@ -110,13 +114,33 @@ def services_window():
                 pygame.quit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
-                #draw_matrix_sinBotones(425)
                 pass
 
-
-        
+        clock.tick(60)
+        cursor.update()
+        screen.blit(background, (0, 0))
+        service_box.update(screen, cursor, False, 425)
+        cost_box.update(screen, cursor, False, 425)
+        box_group.update(screen, cursor, False, None)
+        pygame.display.update()
 
     pygame.quit()
+
+
+def eliminate_row_matrix(y):
+    global matrix_services
+    m = []
+    for i in range(len(matrix_services) - 1):
+        m += [matrix_services[i]]
+    matrix_services = m
+    draw_matrix_services(y)
+
+
+def add_row_matrix(y):
+    global matrix_services
+    matrix_services += [["", ""]]
+    draw_matrix_services(y)
+
 
 def main_menu_window():
     global FPS, cursor, buttons, width, height
