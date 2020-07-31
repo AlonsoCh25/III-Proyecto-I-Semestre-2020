@@ -3,17 +3,14 @@ import pygame
 from reportlab.pdfgen.canvas import Canvas
 from datetime import datetime
 colide = False
-matrix = [["Item", "Quantity","Price","Amount"],[" "," "," "," "],[" "," "," "," "],[" "," "," "," "]]
+matrix = [["Item", "Quantity","Price","Amount"],["","","",""],["","","",""],["","","",""]]
+
 class Cursor(pygame.Rect):
     def __init__(self):
         pygame.Rect.__init__(self, 0,0,1,1)
     def update(self):
         self.left, self.top = pygame.mouse.get_pos()
-    def rect(self):
-        a = pygame.Rect(self.left,self.top,1,1)
-        print(a)
-        return a
-
+        
 #Class to create the buttons, require two images for animation
 class Button(pygame.sprite.Sprite):
     def __init__(self, image1, image2, x, y,scale_x,scale_y):
@@ -32,6 +29,28 @@ class Button(pygame.sprite.Sprite):
             self.image_current = self.image_normal
         #screen.blit(pygame.transform.scale(self.image_current,(self.scale_x,self.scale_y)),self.rect)
         screen.blit(self.image_current,self.rect)
+
+class Button_(pygame.sprite.Sprite):
+    def __init__(self, image1, image2, x, y,scale_x,scale_y, row, colum):
+        pygame.sprite.Sprite.__init__(self)
+        self.row = row
+        self.colum = colum
+        self.scale_x = scale_x
+        self.scale_y = scale_y
+        self.image_normal = pygame.transform.scale(image1,(self.scale_x,self.scale_y))
+        self.image_select = pygame.transform.scale(image2,(self.scale_x,self.scale_y))
+        self.image_current = self.image_normal
+        self.rect = self.image_current.get_rect()
+        self.rect.left, self.rect.top = (x,y)
+    def update(self, screen, cursor):
+        if cursor.colliderect(self.rect):
+            self.image_current = self.image_select
+        else:
+            self.image_current = self.image_normal
+        #screen.blit(pygame.transform.scale(self.image_current,(self.scale_x,self.scale_y)),self.rect)
+        screen.blit(self.image_current,self.rect)
+    def get_pos(self):
+        return (self.row,self.colum)
         
 class csv_class:
     def __init__(self, archive, method):
@@ -101,7 +120,8 @@ class text_box(pygame.sprite.Sprite):
                     self.text = self.text[:-1]
                 else:
                     self.text += event.unicode
-                    
+    def edit_text(self, text):
+        self.text = text
     def get_text(self):
         return self.text
 
@@ -125,10 +145,6 @@ class text_group(pygame.sprite.Sprite):
         self.txt = None
         
     def update(self,screen,cursor, dynamic, event):
-        global colide
-        def return_():
-            colide = True
-            print(colide)
             
         pygame.init()
         font = pygame.font.Font("times.ttf", 20)
@@ -142,11 +158,7 @@ class text_group(pygame.sprite.Sprite):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.input.collidepoint(event.pos):
                     # Set the value of the variable
-                    if self.colum == 0:
-                        self.active= not self.active
-                        return_()
-                    else:
-                        self.active= not self.active
+                    self.active= not self.active
                 else:
                     self.active = False
                 #Set the current color of the box
@@ -186,7 +198,7 @@ class buttom_text(pygame.sprite.Sprite):
         if event!= None:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.input.collidepoint(event.pos):
-                    print(self.text)
+                    pass
                     
     def get_text(self):
         return self.text
