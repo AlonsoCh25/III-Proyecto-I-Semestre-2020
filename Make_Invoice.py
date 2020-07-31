@@ -384,9 +384,9 @@ def make_invoice_window():
                     B_y += scroll_
                     eliminate_row_matrix(screen,B_y)
                 if cursor.colliderect(bt_equal.rect):
-                    draw_matrix(screen, B_y)
                     sub_input.edit_text(str(sub_total))
                     a = tax_input.get_text()
+                    draw_matrix(screen, B_y)
                     if a != "":
                         print(a)
                         print(sub_total)
