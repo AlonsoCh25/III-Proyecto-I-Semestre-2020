@@ -63,7 +63,7 @@ def draw_matrix_services(screen, y):
     row = 0
     y = y + 30
     colum = 0
-    x = 150
+    x = 300
     buttons_services = []
     buttons_box.empty()
     for line in matrix_services:
