@@ -282,7 +282,7 @@ def make_invoice_window():
         cont = 0
         sub_total = 0
         for think in matrix:
-            if cont > 1:
+            if cont > 0:
                 if think[1] != " " and think[1] != "":
                     think[3] = str(int(think[1])*int(think[2]))
                     
