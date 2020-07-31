@@ -23,7 +23,9 @@ img_bt_addUser2 = pygame.image.load("Images/bt_addUser2.png")
 img_bt_manageUser1 = pygame.image.load("Images/bt_manageUsers.png")
 img_bt_manageUser2 = pygame.image.load("Images/bt_manageUsers2.png")
 img_bt_exit1 = pygame.image.load("Images/bt_exit.png")
-img_bt_exit2 = pygame.image.load("Images/bt_exit1.png")
+img_bt_exit2 = pygame.image.load("Images/bt_exit2.png")
+'''img_bt_return1 = pygame.image.load("Images/bt_return.png")
+img_bt_return2 = pygame.image.load("Images/bt_return2.png")'''
 
 bt_createInvoice = Button(img_bt_createPDF1, img_bt_createPDF2, (width/4) + 50, 400, scale_x, scale_y)
 bt_manageInvoice = Button(img_bt_managerPDF1, img_bt_managerPDF2, (width/4) + 50 , 550, scale_x, scale_y)
@@ -34,6 +36,81 @@ bt_manageUser = Button(img_bt_manageUser1, img_bt_manageUser2, (width/2) + 25, 7
 bt_exit = Button(img_bt_exit1, img_bt_exit2, width - 175, height - 100, scale_x, scale_y)
 buttons.add(bt_createInvoice, bt_manageInvoice, bt_report, bt_services, bt_addUser, bt_manageUser, bt_exit)
 
+buttons_box = pygame.sprite.Group()
+buttons_services = []
+
+archive_csv = csv_class("services.csv","rt")
+matrix_services = archive_csv.get_matrix()
+box_group = pygame.sprite.Group()
+
+show_services = False
+rect_select = None
+
+
+def draw_matrix_sinBotones(y):
+    global box_group, matrix
+    trans = pygame.image.load("Images/transparent.png")
+    #Matrix of the items
+    x = 0
+    row = 0
+    box_group.empty()
+    for line in matrix:
+        row +=1
+        colum = 0
+        x = 0
+        y += 30
+        if True:
+            for element in line:
+                if colum == 0:
+                    colum += 1
+                    x += 150
+                    box = text_group(x,y,330,30, element, row-1, colum-1)
+                    box_group.add(box)
+                else:
+                    if colum == 1:
+                        colum += 1
+                        x += 330
+                        box = text_group(x,y,90,30, element, row-1, colum-1)
+                        box_group.add(box)
+                    else:
+                        colum += 1
+                        x += 90
+                        box = text_group(x,y,90,30, element, row-1, colum-1)
+                        box_group.add(box)
+
+def services_window():
+    global FPS, cursor, width, height, buttons_box, buttons_, buttons_box, matrix
+
+    pygame.init()
+    screen = pygame.display.set_mode((width, height))
+    pygame.display.set_caption("Services Window")
+    clock = pygame.time.Clock()
+    background = pygame.image.load("Images/background.png")
+    background = pygame.transform.scale(background, (width, height))
+
+    #bt_return = Button(img_bt_return1, img_bt_return2, 0,0, scale_x, scale_y)
+    draw_matrix_sinBotones(425)
+
+    exit_ = False
+    while exit_ != True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                # Exit
+                exit_ = True
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                box_group.update(screen, cursor, False, event)
+
+
+        clock.tick(60)
+        cursor.update()
+        screen.blit(background, (0, 0))
+        box_group.update(screen, cursor, False, None)
+        draw_matrix_sinBotones(425)
+        pygame.display.update()
+
+    pygame.quit()
 
 def main_menu_window():
     global FPS, cursor, buttons, width, height
@@ -82,7 +159,8 @@ def main_menu_window():
                 elif cursor.colliderect(bt_report.rect):
                     pass
                 elif cursor.colliderect(bt_services.rect):
-                    pass
+                    services_window()
+                    break
                 elif cursor.colliderect(bt_addUser.rect):
                     pass
                 elif cursor.colliderect(bt_manageUser.rect):
