@@ -21,7 +21,7 @@ show_services = False
 rect_select = None
 def draw_matrix(screen,y):
     global box_group, matrix, buttons
-    trans = pygame.image.load("images/transparent.png")
+    trans = pygame.image.load("Images/transparent.png")
     #Matrix of the items
     x = 0
     row = 0
@@ -56,8 +56,8 @@ def draw_matrix(screen,y):
 
 def draw_matrix_services(screen, y):
     global matrix_services, buttons_services, buttons_box, show_services
-    check = pygame.image.load("images/check_s.png")
-    check_s = pygame.image.load("images/check_s_.png")
+    check = pygame.image.load("Images/check_s.png")
+    check_s = pygame.image.load("Images/check_s_.png")
     #Matrix of the items
     row = 0
     y = y + 30
@@ -146,25 +146,25 @@ def make_invoice_window():
     font_n = pygame.font.Font("timesbd.ttf", 20)
     
     #Images of the screen
-    background = pygame.image.load("images/background.png")
+    background = pygame.image.load("Images/background.png")
     logo = pygame.image.load("Logo.png")
-    check = pygame.image.load("images/check.png")
-    check_1 = pygame.image.load("images/check_1.png")
+    check = pygame.image.load("Images/check.png")
+    check_1 = pygame.image.load("Images/check_1.png")
 
-    arrow_up = pygame.image.load("images/arrow_up.png")
-    arrow_u = pygame.image.load("images/arrow_u.png")
+    arrow_up = pygame.image.load("Images/arrow_up.png")
+    arrow_u = pygame.image.load("Images/arrow_u.png")
 
-    arrow_down = pygame.image.load("images/arrow_down.png")
-    arrow_d = pygame.image.load("images/arrow_d.png")
+    arrow_down = pygame.image.load("Images/arrow_down.png")
+    arrow_d = pygame.image.load("Images/arrow_d.png")
 
-    more = pygame.image.load("images/more.png")
-    more_b = pygame.image.load("images/more_b.png")
+    more = pygame.image.load("Images/more.png")
+    more_b = pygame.image.load("Images/more_b.png")
 
-    less = pygame.image.load("images/less.png")
-    less_b = pygame.image.load("images/less_b.png")
+    less = pygame.image.load("Images/less.png")
+    less_b = pygame.image.load("Images/less_b.png")
 
-    equal = pygame.image.load("images/equal.png")
-    equal_b = pygame.image.load("images/equal_b.png")
+    equal = pygame.image.load("Images/equal.png")
+    equal_b = pygame.image.load("Images/equal_b.png")
     
     #Create the buttons and cursor
     cursor = Cursor()
