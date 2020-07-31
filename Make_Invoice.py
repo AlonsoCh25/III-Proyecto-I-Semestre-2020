@@ -39,8 +39,9 @@ def draw_matrix(screen,y):
                     x += 150
                     box = text_group(x,y,330,30, element, row-1, colum-1)
                     box_group.add(box)
-                    bt_transparent = Button_(trans,trans,x,y,320,30, row-1, colum-1)
-                    buttons += [bt_transparent]
+                    if row-1 > 0:
+                        bt_transparent = Button_(trans,trans,x,y,320,30, row-1, colum-1)
+                        buttons += [bt_transparent]
                 else:
                     if colum == 1:
                         colum += 1
