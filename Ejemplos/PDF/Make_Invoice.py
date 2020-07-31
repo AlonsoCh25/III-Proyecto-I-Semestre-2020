@@ -5,6 +5,7 @@ import pygame
 from CLASSES import *
 from datetime import datetime
 import numpy as np
+import time
 ##La parte superior en y es 800
 ##El limite izquierdo en y es 50
 ##El limite derecho en y es 500
@@ -42,7 +43,7 @@ def draw_matrix(screen,y):
                     x += 150
                     box = text_group(x,y,330,30, element, row-1, colum-1)
                     box_group.add(box)
-                    bt_transparent = Button_(trans,trans,x,y,100,30, row-1, colum-1)
+                    bt_transparent = Button_(trans,trans,x,y,320,30, row-1, colum-1)
                     buttons += [bt_transparent]
                 else:
                     if colum == 1:
@@ -57,20 +58,22 @@ def draw_matrix(screen,y):
                         box_group.add(box)
 
 def draw_matrix_services(screen, y):
-    global matrix_services, buttons_services, buttons_box
-    trans = pygame.image.load("images/transparent.png")
+    global matrix_services, buttons_services, buttons_box, show_services
+    check = pygame.image.load("images/check_s.png")
+    check_s = pygame.image.load("images/check_s_.png")
     #Matrix of the items
     row = 0
     y = y + 30
     colum = 0
-    x = 300
+    x = 150
     buttons_services = []
     buttons_box.empty()
+    
     for line in matrix_services:
         txt = ""
         for element in line:
             txt += element
-        bt_transparent = Button_(trans,trans,x,y,330,30, row, colum)
+        bt_transparent = Button_(check,check_s,x+335,y,30,30, row, colum)
         buttons_services += [bt_transparent]
         box = text_group(x,y,330,30, txt, row, colum)
         buttons_box.add(box)
@@ -312,6 +315,7 @@ def make_invoice_window():
                             rect_select = button.get_pos()
                             show_services = True
                             draw_matrix_services(screen, B_y)
+                            
                 if show_services:
                     for button in buttons_services:
                         if cursor.colliderect(button.rect):
