@@ -210,19 +210,17 @@ class pdf:
         self.name = name
         self.canvas = Canvas(self.name + ".pdf")
         self.logo = logo
-        
+        if self.logo == "logo.png":
+            self.canvas.drawImage(self.logo,50, 700, mask = "auto")
+
     def write_string(self,txt,x,y, font,size):
         self.canvas.setFont(font, size)
-        if self.logo == "logo.png":
-            self.canvas.drawImage(self.logo,150, 600, mask = "auto")
         self.canvas.drawString(x,y,txt)
 
     def write_text(self,txt,x,y, font,size):
         self.canvas.setFont(font, size)
         self.text = self.canvas.beginText(x,y)
         self.text.setFont(font, size)
-        if self.logo == "logo.png":
-            self.canvas.drawImage(self.logo,150, 600, mask = "auto")
         self.text.textLines(txt)
         self.canvas.drawText(self.text)
         

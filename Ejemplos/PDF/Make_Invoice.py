@@ -31,12 +31,8 @@ def draw_matrix(screen,y):
         row +=1
         colum = 0
         x = 0
-        y += 30
-        if row-1 == 1:
-            bt_transparent = Button_(trans,trans,x,y,330,30, row-1, colum-1)
-            buttons += [bt_transparent]
-            
-        else:
+        y += 30          
+        if True:
             for element in line:
                 if colum == 0:
                     colum += 1
@@ -97,13 +93,19 @@ def add_row_matrix(screen, B_y):
     matrix += [["","","",""]]
     draw_matrix(screen,B_y)
 
-def create_pdf():
-    print("Create PDF")
+
     
 
 
 def make_invoice_window():
     global box_group, window_c,buttons, show_services,matrix_services, buttons_services, buttons_box,matrix, rect_select
+    def create_pdf():
+        ##La parte superior en y es 800
+        ##El limite izquierdo en y es 50
+        ##El limite derecho en y es 500
+        n_pdf = pdf(inv_number, "logo.png")
+        n_pdf.save()
+        
     #Settings of the screen
     pygame.init()
     weight, height = 952,768
@@ -234,9 +236,7 @@ def make_invoice_window():
         #Update the text box
         due_input.update(screen,cursor, True, d_y)
         note_input.update(screen,cursor, False,n_y)
-        sub_input.update(screen,cursor,False,S_y)
-        tax_input.update(screen,cursor,False,T_y)
-        total_input.update(screen,cursor,False,To_y)
+        
                         
         if not show_services:
             box_group.update(screen, cursor, False, None)
@@ -244,6 +244,18 @@ def make_invoice_window():
             buttons_services = []
             for button in buttons:
                 button.update(screen, cursor)
+
+            screen.blit(Sub,(585,S_y))
+            screen.blit(Tax,(622,T_y))
+            screen.blit(Total,(610,To_y))
+            sub_input.update(screen,cursor,False,S_y)
+            tax_input.update(screen,cursor,False,T_y)
+            total_input.update(screen,cursor,False,To_y)
+            bt_more.update(screen,cursor)
+            bt_less.update(screen,cursor)
+            bt_check.update(screen, cursor)
+            bt_equal.update(screen, cursor)
+            
         if show_services:
             box_group.empty()
             buttons = []
@@ -259,17 +271,13 @@ def make_invoice_window():
         screen.blit(S_date,(600,C_y))
         screen.blit(D_date,(600,E_y))
 
-        screen.blit(Sub,(585,S_y))
-        screen.blit(Tax,(622,T_y))
-        screen.blit(Total,(610,To_y))
+        
         
         #Update Buttons
-        bt_check.update(screen, cursor)
+        
         bt_down.update(screen,cursor)
         bt_up.update(screen,cursor)
-        bt_more.update(screen,cursor)
-        bt_less.update(screen,cursor)
-        bt_equal.update(screen, cursor)
+        
 
         #Read the changes in the matrix
         cont = 0
@@ -386,6 +394,7 @@ def make_invoice_window():
                         print(sub_total)
                         to = sub_total+((int(a)/100)*sub_total)
                         total_input.edit_text(str(to))
+    
     pygame.quit()
     
 make_invoice_window()
