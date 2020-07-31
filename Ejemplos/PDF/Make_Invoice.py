@@ -113,14 +113,12 @@ def make_invoice_window():
     scroll = 10
     scroll_ = 30
     #List of the invoice numers
-    archive_csv = csv_class("invoice num.csv","rt")
+    archive_csv = csv_class("invoices.csv","rt")
     matrix_csv = archive_csv.get_matrix()
     inv_number = 1
     if matrix_csv[0] != []:
         for row in matrix_csv:
-            for num in row:
-                inv_number = int(num) + 1
-    matrix_csv[0] += [str(inv_number)]
+            inv_number = int(row[0]) + 1
     print(matrix_csv)
     inv_number = str(inv_number)
     
