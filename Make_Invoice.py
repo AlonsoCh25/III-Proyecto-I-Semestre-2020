@@ -1,4 +1,4 @@
-from reportlab import *
+from reportlab.pdfbase.ttfonts import TTFont
 from PIL import Image
 from reportlab.pdfgen.canvas import Canvas
 import pygame
@@ -6,6 +6,10 @@ from CLASSES import *
 from datetime import datetime
 import numpy as np
 import time
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+pdfmetrics.registerFont(TTFont('times','times.ttf'))
+pdfmetrics.registerFont(TTFont('timesb','timesbd.ttf'))
 ##La parte superior en y es 800
 ##El limite izquierdo en y es 50
 ##El limite derecho en y es 500
@@ -13,6 +17,9 @@ archive_csv = csv_class("services.csv","rt")
 matrix_services = archive_csv.get_matrix()
 box_group = pygame.sprite.Group()
 buttons = []
+
+archive_c = csv_class("data_users.csv","rt")
+matrix_data = archive_c.get_matrix()
 
 buttons_box = pygame.sprite.Group()
 buttons_services = []
@@ -99,12 +106,55 @@ def add_row_matrix(screen, B_y):
 
 
 def make_invoice_window():
-    global box_group, window_c,buttons, show_services,matrix_services, buttons_services, buttons_box,matrix, rect_select
+    global box_group, matrix_data, window_c,buttons, show_services,matrix_services, buttons_services, buttons_box,matrix, rect_select
     def create_pdf():
         ##La parte superior en y es 800
         ##El limite izquierdo en y es 50
         ##El limite derecho en y es 500
         n_pdf = pdf(inv_number, "logo.png")
+        n_pdf.write_string("3C Landscaping services", 50,650,"timesb",12)
+        
+        txt_data = ""
+        for row in matrix_data:
+            for element in row:
+                txt_data += str(element)
+                txt_data += "\n"
+        n_pdf.write_text(txt_data,50,635,"times", 12)
+        txt_data = ""
+        n_pdf.write_string("3C Landscaping services", 50,650,"timesb",12)
+        n_pdf.write_string(("Invoice #" + inv_number), 400,650,"times",12)
+        n_pdf.write_string(("Invoice Date " + str(now.date())), 400,635,"times",12)
+        n_pdf.write_string(("Due Date " + due_input.get_text()), 400,620,"times",12)
+        n_pdf.write_string("Bill To", 50,590,"timesb",12)
+        n_pdf.write_string(C_name_, 50,575,"times",12)
+        n_pdf.write_string(C_email_, 50,560,"times",12)
+        n_pdf.write_string(C_addres, 50,545,"times",12)
+        n_pdf.write_string("Ship To", 400,590,"timesb",12)
+        n_pdf.write_string(C_name_, 400,575,"times",12)
+       
+        colum = 0
+        row_ = 0
+        x = 50
+        y = 525
+        for row in matrix:
+            colum = 0
+            x = 50
+            
+            for element in row:
+                if row_ == 0:
+                    n_pdf.write_string(element, x,y,"timesb",12)
+                    colum += 1
+                    x += 160
+                else:
+                    n_pdf.write_string(element, x,y,"times",12)
+                    colum += 1
+                    x += 160
+            row_ +=1
+            y -= 15
+
+        n_pdf.write_string("    Subtotal " + sub_input.get_text(), 475,y-15,"times",12)
+        n_pdf.write_string(" Impuestos " + tax_input.get_text()+"%", 475,y-30,"times",12)
+        n_pdf.write_string("         Total " + total_input.get_text(), 475,y-45,"times",12)
         n_pdf.save()
         
     #Settings of the screen
@@ -178,12 +228,14 @@ def make_invoice_window():
     Inv_d = "Invoice For"
     Inv_d = font_n.render(Inv_d, True, (0, 0, 0))
 
-    C_name = "[Customer Name]"
-    C_name = font.render(C_name, True, (0, 0, 0))
+    C_name_ = "[Customer Name]"
+    C_name = font.render(C_name_, True, (0, 0, 0))
 
-    C_email = "[Customer Email]"
-    C_email = font.render(C_email, True, (0, 0, 0))
+    C_email_ = "[Customer Email]"
+    C_email = font.render(C_email_, True, (0, 0, 0))
 
+    C_addres = "[Customer Addres]"
+    
     Inv_n = "Invoice Number: " + inv_number
     Inv_n = font_n.render(Inv_n, True, (0, 0, 0))
 

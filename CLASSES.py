@@ -94,7 +94,7 @@ class text_box(pygame.sprite.Sprite):
         self.color = self.color_i
         self.active = False
         self.text = text
-        self.txt = None
+        self.txt = ""
 
     def update(self,screen,cursor, dynamic, y):
         self.input.y = y
@@ -211,6 +211,10 @@ class pdf:
         self.name = name
         self.canvas = Canvas(self.name + ".pdf")
         self.logo = logo
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        pdfmetrics.registerFont(TTFont('times','times.ttf'))
+        pdfmetrics.registerFont(TTFont('timesb','timesbd.ttf'))
         if self.logo == "logo.png":
             self.canvas.drawImage(self.logo,50, 700, mask = "auto")
 
