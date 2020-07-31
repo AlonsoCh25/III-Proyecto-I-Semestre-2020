@@ -1,7 +1,7 @@
 import pygame
 from datetime import datetime
 from CLASSES import *
-
+from Login import make_invoice_window
 
 #Creation of groups and cursor
 buttons_main = pygame.sprite.Group()
@@ -294,6 +294,15 @@ def main_menu_window():
 
     exit_ = False
     while exit_ != True:
+        clock.tick(60)
+        cursor.update()
+        screen.blit(background, (0, 0))
+        screen.blit(welcome_txt, (10, 5))
+        screen.blit(function_txt, ((round(width/2)) - 210, 350))
+        screen.blit(date, (750, 5))
+        screen.blit(logo, (round((width/2)) - 200, 50))
+        buttons_main.update(screen, cursor)
+        pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 # Exit
@@ -306,11 +315,16 @@ def main_menu_window():
                     pygame.quit()
                     break
                 elif cursor.colliderect(bt_createInvoice.rect):
-                    pass
+                    exit_ = True
+                    pygame.quit()
+                    make_invoice_window()
+                    break
+                    
                 elif cursor.colliderect(bt_manageInvoice.rect):
                     manage_invoices_window()
                     exit_ = True
                     pygame.quit()
+                    break
                 elif cursor.colliderect(bt_report.rect):
                     pass
                 elif cursor.colliderect(bt_services.rect):
@@ -323,17 +337,6 @@ def main_menu_window():
                 elif cursor.colliderect(bt_manageUser.rect):
                     pass
 
-        clock.tick(60)
-        cursor.update()
-        screen.blit(background, (0, 0))
-        screen.blit(welcome_txt, (10, 5))
-        screen.blit(function_txt, ((round(width/2)) - 210, 350))
-        screen.blit(date, (750, 5))
-        screen.blit(logo, (round((width/2)) - 200, 50))
-        buttons_main.update(screen, cursor)
-
-        pygame.display.update()
+        
 
     pygame.quit()
-
-main_menu_window()
