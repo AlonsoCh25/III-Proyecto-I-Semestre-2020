@@ -95,7 +95,8 @@ def add_row_matrix(screen, B_y):
     draw_matrix(screen,B_y)
 
 def create_pdf():
-    pass
+    print("Create PDF")
+    
 
 
 def make_invoice_window():
@@ -321,7 +322,7 @@ def make_invoice_window():
                             draw_matrix(screen, B_y)
                             rect_select = None
                 if cursor.colliderect(bt_check.rect):
-                    print("Push Check")
+                    create_pdf()
                 if cursor.colliderect(bt_down.rect):
                     d_y += scroll
                     n_y += scroll
