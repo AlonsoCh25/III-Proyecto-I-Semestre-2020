@@ -80,8 +80,9 @@ def draw_matrix_sinBotones(y):
 
 def services_window():
     global FPS, cursor, width, height, buttons_box, buttons_, buttons_box, matrix
-
     pygame.init()
+    #Set initial clock
+    
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Services Window")
     clock = pygame.time.Clock()
@@ -93,22 +94,27 @@ def services_window():
 
     exit_ = False
     while exit_ != True:
+        clock.tick(60)
+        cursor.update()
+        screen.blit(background, (0, 0))
+        box_group.update(screen, cursor, False, None)
+        pygame.display.update()
+        
+        
         for event in pygame.event.get():
+            box_group.update(screen, cursor, False, event)
+            
             if event.type == pygame.QUIT:
                 # Exit
                 exit_ = True
                 pygame.quit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
-                box_group.update(screen, cursor, False, event)
+                #draw_matrix_sinBotones(425)
+                pass
 
 
-        clock.tick(60)
-        cursor.update()
-        screen.blit(background, (0, 0))
-        box_group.update(screen, cursor, False, None)
-        draw_matrix_sinBotones(425)
-        pygame.display.update()
+        
 
     pygame.quit()
 
@@ -170,9 +176,9 @@ def main_menu_window():
         cursor.update()
         screen.blit(background, (0, 0))
         screen.blit(welcome_txt, (10, 5))
-        screen.blit(function_txt, ((width/2) - 210, 350))
+        screen.blit(function_txt, ((round(width/2)) - 210, 350))
         screen.blit(date, (750, 5))
-        screen.blit(logo, ((width/2) - 200, 50))
+        screen.blit(logo, (round((width/2)) - 200, 50))
         buttons.update(screen, cursor)
 
         pygame.display.update()

@@ -9,6 +9,7 @@ class Cursor(pygame.Rect):
     def __init__(self):
         pygame.Rect.__init__(self, 0,0,1,1)
     def update(self):
+        pygame.init()
         self.left, self.top = pygame.mouse.get_pos()
         
 #Class to create the buttons, require two images for animation
@@ -166,6 +167,7 @@ class text_group(pygame.sprite.Sprite):
             if event.type == pygame.KEYDOWN:
                 if self.active:
                     if event.key == pygame.K_BACKSPACE:
+                        print("Tecleo")
                         self.text = self.text[:-1]
                         matrix[self.row][self.colum] = self.text
                     else:
