@@ -147,7 +147,7 @@ def make_invoice_window():
     
     #Images of the screen
     background = pygame.image.load("Images/background.png")
-    logo = pygame.image.load("Logo.png")
+    logo = pygame.image.load("logo.png")
     check = pygame.image.load("Images/check.png")
     check_1 = pygame.image.load("Images/check_1.png")
 
