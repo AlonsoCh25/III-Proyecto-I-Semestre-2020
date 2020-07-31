@@ -203,7 +203,6 @@ def draw_matrix_invoices(y):
                         box = text_box_invoices(x, y, 150, 30, element, row - 1, colum - 1)
                         box_group_i.add(box)
                     elif colum == 4:
-                        print(x)
                         colum += 1
                         x += 150
                         bt_trash = Button_(img_trash1, img_trash2, x, y + 2, 25, 25, row - 1, colum - 1)
@@ -249,6 +248,8 @@ def manage_invoices_window():
                     archive_csv.write(matrix_invoices)
                     archive_csv.update_matrix("Invoices.csv", "w")
                     main_menu_window()
+                    exit_ = True
+                    pygame.quit()
 
         clock.tick(60)
         screen.blit(background, (0, 0))
