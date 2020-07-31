@@ -13,7 +13,7 @@ pdfmetrics.registerFont(TTFont('timesb','timesbd.ttf'))
 ##La parte superior en y es 800
 ##El limite izquierdo en y es 50
 ##El limite derecho en y es 500
-archive_csv = csv_class("services.csv","rt")
+archive_csv = csv_class("Services.csv","rt")
 matrix_services = archive_csv.get_matrix()
 box_group = pygame.sprite.Group()
 buttons = []
@@ -165,7 +165,7 @@ def make_invoice_window():
     scroll = 10
     scroll_ = 30
     #List of the invoice numers
-    archive_csv = csv_class("invoices.csv","rt")
+    archive_csv = csv_class("Invoices.csv","rt")
     matrix_csv = archive_csv.get_matrix()
     inv_number = 1
     if matrix_csv[0] != []:

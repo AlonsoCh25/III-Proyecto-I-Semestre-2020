@@ -83,7 +83,7 @@ class csv_class:
         with f:
             writer = csv.writer(f)
             writer.writerows(a)
-            
+
 class text_box(pygame.sprite.Sprite):
     def __init__(self, x,y,w,h, text):
         self.y = y
@@ -174,6 +174,60 @@ class text_group(pygame.sprite.Sprite):
                         self.text += event.unicode
                         matrix[self.row][self.colum] = self.text
                     
+    def get_text(self):
+        return self.text
+
+
+class text_group_services(pygame.sprite.Sprite):
+    pygame.init()
+
+    def __init__(self, x, y, w, h, text, row, colum):
+        pygame.init()
+        pygame.sprite.Sprite.__init__(self)
+        self.row = row
+        self.colum = colum
+        self.y = y
+        self.input = pygame.Rect(x, self.y, w, h)
+        self.h = h
+        self.w = w
+        self.color_i = (0, 0, 0)
+        self.color_a = (255, 255, 255)
+        self.color = self.color_i
+        self.active = False
+        self.text = text
+        self.txt = None
+
+    def update(self, screen, cursor, dynamic, event):
+
+        archive_csv = csv_class("services.csv", "rt")
+        matrix_services = archive_csv.get_matrix()
+
+        pygame.init()
+        font = pygame.font.Font("times.ttf", 20)
+        self.txt = font.render(self.text, True, (0, 0, 0))
+        if dynamic:
+            width = max(150, self.txt.get_width() + 10)
+            self.input.w = width
+        pygame.draw.rect(screen, self.color, self.input, 1)
+        screen.blit(self.txt, (self.input.x + 2, self.input.y + 1))
+        if event != None:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.input.collidepoint(event.pos):
+                    # Set the value of the variable
+                    self.active = not self.active
+                else:
+                    self.active = False
+                # Set the current color of the box
+                self.color = self.color_a if self.active else self.color_i
+            if event.type == pygame.KEYDOWN:
+                if self.active:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.text = self.text[:-1]
+                        matrix_services[self.row][self.colum] = self.text
+                    else:
+                        self.text += event.unicode
+                        matrix_services[self.row][self.colum] = self.text
+
     def get_text(self):
         return self.text
 
