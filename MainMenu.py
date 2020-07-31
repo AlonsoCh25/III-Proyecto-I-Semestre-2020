@@ -64,7 +64,7 @@ archive_csv = csv_class("Invoices.csv", "rt")
 matrix_invoices = archive_csv.get_matrix()
 
 
-def draw_matrix_services(y):
+def draw_matrix_services_s(y):
     global box_group_s, matrix_services
 
     #Matrix of the services
@@ -101,13 +101,13 @@ def eliminate_row_matrix_services(y):
     for i in range(len(matrix_services) - 1):
         m += [matrix_services[i]]
     matrix_services = m
-    draw_matrix_services(y)
+    draw_matrix_services_s(y)
 
 
 def add_row_matrix_services(y):
     global matrix_services
     matrix_services += [["", ""]]
-    draw_matrix_services(y)
+    draw_matrix_services_s(y)
 
 
 def services_window():
@@ -123,7 +123,7 @@ def services_window():
     logo = pygame.transform.scale(logo, (300, 150))
     font = pygame.font.Font("times.ttf", 20)
 
-    draw_matrix_services(210)
+    draw_matrix_services_s(210)
     service_box = text_box(225, 100, 330, 30, "Services")
     cost_box = text_box(555, 100, 90, 30, "Cost")
     services_txt = "Services Manager"
