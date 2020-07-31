@@ -98,6 +98,8 @@ def services_window():
     clock = pygame.time.Clock()
     background = pygame.image.load("Images/background.png")
     background = pygame.transform.scale(background, (width, height))
+    logo = pygame.image.load("Images/Logo.png")
+    logo = pygame.transform.scale(logo, (300, 150))
 
     draw_matrix_services(425)
     service_box = text_box(150, 395, 330, 30, "Services")
@@ -117,11 +119,14 @@ def services_window():
                 pass
 
         clock.tick(60)
-        cursor.update()
         screen.blit(background, (0, 0))
+        screen.blit(logo, (round((width / 2)) - 150, 25))
+
+        cursor.update()
         service_box.update(screen, cursor, False, 425)
         cost_box.update(screen, cursor, False, 425)
         box_group.update(screen, cursor, False, None)
+        buttons_servicesGroup.update(screen, cursor)
         pygame.display.update()
 
     pygame.quit()
