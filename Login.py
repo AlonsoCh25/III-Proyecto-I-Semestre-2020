@@ -21,8 +21,6 @@ pdfmetrics.registerFont(TTFont('timesb','timesbd.ttf'))
 box_group = pygame.sprite.Group()
 buttons = []
 
-archive_c = csv_class("data_users.csv","rt")
-matrix_data = archive_c.get_matrix()
 
 buttons_box = pygame.sprite.Group()
 buttons_services = []
@@ -217,6 +215,118 @@ def add_row_matrix(screen, B_y):
     
 
 """Windows Functions"""
+def register_window():
+    global matrix_customer
+    
+    camera = cv2.VideoCapture(0)
+    pygame.init()
+    pygame.display.set_caption("Register User")
+    weight, height = 952,768
+    screen = pygame.display.set_mode((weight,height))
+    
+    #Font
+    font = pygame.font.Font("times.ttf", 60)
+    font_n = pygame.font.Font("timesbd.ttf", 20)
+
+    #text
+    User = "User"
+    User = font_n.render(User, True, (0,0,0))
+    Name = "Full Name"
+    Name = font_n.render(Name, True, (0,0,0))
+    Id = "Id Number"
+    Id = font_n.render(Id, True, (0,0,0))
+    Age = "Age"
+    Age = font_n.render(Age, True, (0,0,0))
+    Email = "Email"
+    Email = font_n.render(Email, True, (0,0,0))
+    Address = "Residence Address"
+    Address = font_n.render(Address, True, (0,0,0))
+    
+    #text box
+    User_box = text_box(50, 75, 300,30, "")
+    Name_box = text_box(50, 150, 300,30, "")
+    Id_box = text_box(50, 225, 300,30, "")
+    Age_box = text_box(50, 300, 300,30, "")
+    Email_box = text_box(50, 375, 300,30, "")
+    Address_box = text_box(50, 450, 300,30,"")
+
+    
+    background = pygame.image.load("Images/background.png")
+    check = pygame.image.load("Images/check.png")
+    check_1 = pygame.image.load("Images/check_1.png")
+    cursor =  Cursor()
+    button = Button(check,check_1, 600, 500,80,80)
+    get_data  = True
+    exit_ = False
+    while exit_ != True:
+        screen.blit(pygame.transform.scale(background,(weight,height)),(0,0))
+        ret, frame_ = camera.read()
+        cursor.update()
+        
+        if not get_data:
+            frame = cv2.cvtColor(frame_, cv2.COLOR_BGR2RGB)
+            frame = np.rot90(frame)
+            frame = pygame.surfarray.make_surface(frame)
+            screen.blit(frame, (150,0))
+            button.update(screen,cursor)
+            pygame.display.update()
+            
+        if get_data:
+            screen.blit(User,(50,50))
+            screen.blit(Name,(50,125))
+            screen.blit(Age,(50,200))
+            screen.blit(Id,(50,275))
+            screen.blit(Email,(50,350))
+            screen.blit(Address,(50,425))
+            button.update(screen,cursor)
+            User_box.update(screen, cursor, True, 75)
+            Name_box.update(screen, cursor, True, 150)
+            Age_box.update(screen, cursor, True, 225)
+            Id_box.update(screen, cursor, True, 300)
+            Email_box.update(screen, cursor, True, 375)
+            Address_box.update(screen, cursor, True, 450)
+            pygame.display.update()
+
+            
+        for event in pygame.event.get():
+            if get_data:
+                User_box.text_update(event)
+                Name_box.text_update(event)
+                Id_box.text_update(event)
+                Age_box.text_update(event)
+                Email_box.text_update(event)
+                Address_box.text_update(event)
+                pygame.display.update()
+            
+            if event.type == pygame.QUIT:
+                # Exit
+                exit_ = True
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if cursor.colliderect(button.rect):
+                    if not get_data:
+                        for i in range(1):
+                            cv2.imwrite("faces/"+User_box.get_text()+".png", frame_)
+                        m_list = []
+                        m_list += [User_box.get_text()]
+                        m_list += [Name_box.get_text()]
+                        m_list += [Age_box.get_text()]
+                        m_list += [Id_box.get_text()]
+                        m_list += [Email_box.get_text()]
+                        m_list += [Address_box.get_text()]
+                        matrix_customer += [m_list]
+                        print(matrix_customer)
+                        archive_c_.write(matrix_customer)
+                        archive_c_.update_matrix("customer_data.csv","w")
+                        main_menu_window()
+                        exit_ = True
+                        pygame.quit()
+                        camera.release()
+                        break
+                    if get_data:
+                        get_data = False
+
 def login_window():
     global show_search, show_done, show_camera, name
     
@@ -278,7 +388,6 @@ def login_window():
                         for dirpath, dnames, fnames in os.walk("./faces_unknown"):
                             for f in fnames:
                                 if f.endswith(".jpg") or f.endswith(".png"):
-                                    print(type(f))
                                     classify_face(f)
                     if not show_camera:
                         pass
@@ -916,4 +1025,4 @@ def main_menu_window():
 
     pygame.quit()
 
-login_window()
+register_window()

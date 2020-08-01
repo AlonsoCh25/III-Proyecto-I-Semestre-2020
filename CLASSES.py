@@ -293,5 +293,10 @@ class pdf:
 
 archive_csv = csv_class("Services.csv", "rt")
 matrix_services = archive_csv.get_matrix()
-archive_csv = csv_class("Invoices.csv", "rt")
-matrix_invoices = archive_csv.get_matrix()
+archive_csv_ = csv_class("Invoices.csv", "rt")
+matrix_invoices = archive_csv_.get_matrix()
+archive_c = csv_class("data_users.csv","rt")
+matrix_data = archive_c.get_matrix()
+archive_c_ = csv_class("customer_data.csv","rt")
+matrix_customer = archive_c_.get_matrix()
+
