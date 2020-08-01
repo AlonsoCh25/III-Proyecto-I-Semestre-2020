@@ -18,8 +18,6 @@ from time import sleep
 
 pdfmetrics.registerFont(TTFont('times','times.ttf'))
 pdfmetrics.registerFont(TTFont('timesb','timesbd.ttf'))
-archive_csv = csv_class("Services.csv","rt")
-matrix_services = archive_csv.get_matrix()
 box_group = pygame.sprite.Group()
 buttons = []
 
@@ -35,6 +33,61 @@ show_camera = True
 show_done = False
 name = "Unknown"
 
+#Creation of groups and cursor
+buttons_main = pygame.sprite.Group()
+buttons_servicesGroup = pygame.sprite.Group()
+buttons_box_s = pygame.sprite.Group()
+box_group_s = pygame.sprite.Group()
+buttons_invoiceGroup = pygame.sprite.Group()
+buttons_box_i = pygame.sprite.Group()
+box_group_i = pygame.sprite.Group()
+cursor = Cursor()
+FPS = 60
+width, height = 900, 900
+
+#Creation of buttons
+scale_x, scale_y = 150, 75
+img_bt_createPDF1 = pygame.image.load("Images/bt_createInvoice.png")
+img_bt_createPDF2 = pygame.image.load("Images/bt_createInvoice2.png")
+img_bt_managerPDF1 = pygame.image.load("Images/bt_manageInvoices.png")
+img_bt_managerPDF2 = pygame.image.load("Images/bt_manageInvoices2.png")
+img_bt_report1 = pygame.image.load("Images/bt_generateReport.png")
+img_bt_report2 = pygame.image.load("Images/bt_generateReport2.png")
+img_bt_services1 = pygame.image.load("Images/bt_services.png")
+img_bt_services2 = pygame.image.load("Images/bt_services2.png")
+img_bt_addUser1 = pygame.image.load("Images/bt_addUser.png")
+img_bt_addUser2 = pygame.image.load("Images/bt_addUser2.png")
+img_bt_manageUser1 = pygame.image.load("Images/bt_manageUsers.png")
+img_bt_manageUser2 = pygame.image.load("Images/bt_manageUsers2.png")
+img_bt_exit1 = pygame.image.load("Images/bt_exit.png")
+img_bt_exit2 = pygame.image.load("Images/bt_exit2.png")
+img_bt_return1 = pygame.image.load("Images/bt_return.png")
+img_bt_return2 = pygame.image.load("Images/bt_return2.png")
+more = pygame.image.load("Images/more.png")
+more_b = pygame.image.load("Images/more_b.png")
+less = pygame.image.load("Images/less.png")
+less_b = pygame.image.load("Images/less_b.png")
+img_trash1 = pygame.image.load("Images/bt_trash.png")
+img_trash2 = pygame.image.load("Images/bt_trash2.png")
+img_inspect1 = pygame.image.load("Images/bt_inspect.png")
+img_inspect2 = pygame.image.load("Images/bt_inspect2.png")
+
+bt_createInvoice = Button(img_bt_createPDF1, img_bt_createPDF2, (width/4) + 50, 400, scale_x, scale_y)
+bt_manageInvoice = Button(img_bt_managerPDF1, img_bt_managerPDF2, (width/4) + 50 , 550, scale_x, scale_y)
+bt_report = Button(img_bt_report1, img_bt_report2, (width/4) + 50, 700, scale_x, scale_y)
+bt_services = Button(img_bt_services1, img_bt_services2, (width/2) + 25, 400, scale_x, scale_y)
+bt_addUser = Button(img_bt_addUser1, img_bt_addUser2, (width/2) + 25, 550, scale_x, scale_y)
+bt_manageUser = Button(img_bt_manageUser1, img_bt_manageUser2, (width/2) + 25, 700, scale_x, scale_y)
+bt_exit = Button(img_bt_exit1, img_bt_exit2, width - 175, height - 100, scale_x, scale_y)
+buttons_main.add(bt_createInvoice, bt_manageInvoice, bt_report, bt_services, bt_addUser, bt_manageUser, bt_exit)
+
+bt_return_s = Button(img_bt_return1, img_bt_return2, width - 160 , 10, scale_x, scale_y)
+bt_more_s = Button(more, more_b, 650, 210, 60, 60)
+bt_less_s = Button(less, less_b, 650, 270, 60, 60)
+buttons_servicesGroup.add(bt_return_s, bt_more_s, bt_less_s)
+
+bt_return_i = Button(img_bt_return1, img_bt_return2, width - 160 , 10, scale_x, scale_y)
+buttons_invoiceGroup.add(bt_return_i)
 
 """Funtions for Face Recognition"""
 
@@ -579,65 +632,10 @@ def make_invoice_window():
     pygame.quit()
     
 """Functions"""
-#Creation of groups and cursor
-buttons_main = pygame.sprite.Group()
-buttons_servicesGroup = pygame.sprite.Group()
-buttons_box_s = pygame.sprite.Group()
-box_group_s = pygame.sprite.Group()
-buttons_invoiceGroup = pygame.sprite.Group()
-buttons_box_i = pygame.sprite.Group()
-box_group_i = pygame.sprite.Group()
-cursor = Cursor()
-FPS = 60
-width, height = 900, 900
-
-#Creation of buttons
-scale_x, scale_y = 150, 75
-img_bt_createPDF1 = pygame.image.load("Images/bt_createInvoice.png")
-img_bt_createPDF2 = pygame.image.load("Images/bt_createInvoice2.png")
-img_bt_managerPDF1 = pygame.image.load("Images/bt_manageInvoices.png")
-img_bt_managerPDF2 = pygame.image.load("Images/bt_manageInvoices2.png")
-img_bt_report1 = pygame.image.load("Images/bt_generateReport.png")
-img_bt_report2 = pygame.image.load("Images/bt_generateReport2.png")
-img_bt_services1 = pygame.image.load("Images/bt_services.png")
-img_bt_services2 = pygame.image.load("Images/bt_services2.png")
-img_bt_addUser1 = pygame.image.load("Images/bt_addUser.png")
-img_bt_addUser2 = pygame.image.load("Images/bt_addUser2.png")
-img_bt_manageUser1 = pygame.image.load("Images/bt_manageUsers.png")
-img_bt_manageUser2 = pygame.image.load("Images/bt_manageUsers2.png")
-img_bt_exit1 = pygame.image.load("Images/bt_exit.png")
-img_bt_exit2 = pygame.image.load("Images/bt_exit2.png")
-img_bt_return1 = pygame.image.load("Images/bt_return.png")
-img_bt_return2 = pygame.image.load("Images/bt_return2.png")
-more = pygame.image.load("Images/more.png")
-more_b = pygame.image.load("Images/more_b.png")
-less = pygame.image.load("Images/less.png")
-less_b = pygame.image.load("Images/less_b.png")
-img_trash1 = pygame.image.load("Images/bt_trash.png")
-img_trash2 = pygame.image.load("Images/bt_trash2.png")
-img_inspect1 = pygame.image.load("Images/bt_inspect.png")
-img_inspect2 = pygame.image.load("Images/bt_inspect2.png")
-
-bt_createInvoice = Button(img_bt_createPDF1, img_bt_createPDF2, (width/4) + 50, 400, scale_x, scale_y)
-bt_manageInvoice = Button(img_bt_managerPDF1, img_bt_managerPDF2, (width/4) + 50 , 550, scale_x, scale_y)
-bt_report = Button(img_bt_report1, img_bt_report2, (width/4) + 50, 700, scale_x, scale_y)
-bt_services = Button(img_bt_services1, img_bt_services2, (width/2) + 25, 400, scale_x, scale_y)
-bt_addUser = Button(img_bt_addUser1, img_bt_addUser2, (width/2) + 25, 550, scale_x, scale_y)
-bt_manageUser = Button(img_bt_manageUser1, img_bt_manageUser2, (width/2) + 25, 700, scale_x, scale_y)
-bt_exit = Button(img_bt_exit1, img_bt_exit2, width - 175, height - 100, scale_x, scale_y)
-buttons_main.add(bt_createInvoice, bt_manageInvoice, bt_report, bt_services, bt_addUser, bt_manageUser, bt_exit)
-
-bt_return_s = Button(img_bt_return1, img_bt_return2, width - 160 , 10, scale_x, scale_y)
-bt_more_s = Button(more, more_b, 650, 210, 60, 60)
-bt_less_s = Button(less, less_b, 650, 270, 60, 60)
-buttons_servicesGroup.add(bt_return_s, bt_more_s, bt_less_s)
-
-bt_return_i = Button(img_bt_return1, img_bt_return2, width - 160 , 10, scale_x, scale_y)
-buttons_invoiceGroup.add(bt_return_i)
 
 
-archive_csv = csv_class("Invoices.csv", "rt")
-matrix_invoices = archive_csv.get_matrix()
+
+
 
 
 def draw_matrix_services_s(y):
@@ -673,18 +671,19 @@ def draw_matrix_services_s(y):
 
 def eliminate_row_matrix_services(y):
     global matrix_services
+    
     m = []
     for i in range(len(matrix_services) - 1):
         m += [matrix_services[i]]
     matrix_services = m
     draw_matrix_services_s(y)
-
+    print(matrix_services)
 
 def add_row_matrix_services(y):
     global matrix_services
     matrix_services += [["", ""]]
     draw_matrix_services_s(y)
-
+    print(matrix_services)
 
 def services_window():
     global FPS, cursor, width, height, buttons_box_s, buttons_, matrix_services
@@ -729,7 +728,7 @@ def services_window():
                     exit_ = True
                     pygame.quit()
 
-        clock.tick(60)
+        clock.tick(10)
         screen.blit(background, (0, 0))
         screen.blit(logo, (round((width / 2)) - 150, 25))
         screen.blit(services_txt, (round(width/2 - 80), 190))
