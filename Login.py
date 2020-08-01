@@ -411,9 +411,7 @@ def login_window():
                         print("Here")
                         for i in range(1):
                             cv2.imwrite("faces_unknown/unknown"+str(i)+".png", frame_)
-                        print("TODay")
-                        for dirpath, dnames, fnames in (os.walk("./faces_unknown")):
-                            
+                        for dirpath, dnames, fnames in os.walk("./faces_unknown"):
                             for f in fnames:
                                 if f.endswith(".jpg") or f.endswith(".png"):
                                     classify_face(f)
