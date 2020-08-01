@@ -254,21 +254,33 @@ def register_window():
     background = pygame.image.load("Images/background.png")
     check = pygame.image.load("Images/check.png")
     check_1 = pygame.image.load("Images/check_1.png")
+    camera_ = pygame.image.load("Images/camera.png")
+    camera_1 = pygame.image.load("Images/camera_b.png")
+    logo = pygame.image.load("Images/Logo.png")
+    camera_1 = pygame.image.load("Images/camera_b.png")
+    return_ = pygame.image.load("Images/bt_return.png")
+    return_1 = pygame.image.load("Images/bt_return2.png")
+    
+    
     cursor =  Cursor()
-    button = Button(check,check_1, 600, 500,80,80)
+    button = Button(check,check_1, 100, 550,80,80)
+    button_c = Button(camera_,camera_1, 400, 500,80,80)
+    button_r = Button(return_,return_1, 65,650,150,80)
     get_data  = True
     exit_ = False
     while exit_ != True:
         screen.blit(pygame.transform.scale(background,(weight,height)),(0,0))
+        
         ret, frame_ = camera.read()
         cursor.update()
-        
+        button_r.update(screen,cursor)
         if not get_data:
             frame = cv2.cvtColor(frame_, cv2.COLOR_BGR2RGB)
             frame = np.rot90(frame)
             frame = pygame.surfarray.make_surface(frame)
             screen.blit(frame, (150,0))
-            button.update(screen,cursor)
+            screen.blit(pygame.transform.scale(logo,(300,150)),(600,600))
+            button_c.update(screen,cursor)
             pygame.display.update()
             
         if get_data:
@@ -278,6 +290,7 @@ def register_window():
             screen.blit(Id,(50,275))
             screen.blit(Email,(50,350))
             screen.blit(Address,(50,425))
+            screen.blit(pygame.transform.scale(logo,(500,200)),(400,150))
             button.update(screen,cursor)
             User_box.update(screen, cursor, True, 75)
             Name_box.update(screen, cursor, True, 150)
@@ -306,27 +319,37 @@ def register_window():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if cursor.colliderect(button.rect):
                     if not get_data:
-                        for i in range(1):
-                            cv2.imwrite("faces/"+User_box.get_text()+".png", frame_)
-                        m_list = []
-                        m_list += [User_box.get_text()]
-                        m_list += [Name_box.get_text()]
-                        m_list += [Age_box.get_text()]
-                        m_list += [Id_box.get_text()]
-                        m_list += [Email_box.get_text()]
-                        m_list += [Address_box.get_text()]
-                        matrix_customer += [m_list]
-                        print(matrix_customer)
-                        archive_c_.write(matrix_customer)
-                        archive_c_.update_matrix("customer_data.csv","w")
+                        pass
+                    if get_data:
+                        get_data = False
+                if cursor.colliderect(button_c.rect):
+                    for i in range(1):
+                        cv2.imwrite("faces/"+User_box.get_text()+".png", frame_)
+                    m_list = []
+                    m_list += [User_box.get_text()]
+                    m_list += [Name_box.get_text()]
+                    m_list += [Age_box.get_text()]
+                    m_list += [Id_box.get_text()]
+                    m_list += [Email_box.get_text()]
+                    m_list += [Address_box.get_text()]
+                    matrix_customer += [m_list]
+                    print(matrix_customer)
+                    archive_c_.write(matrix_customer)
+                    archive_c_.update_matrix("customer_data.csv","w")
+                    main_menu_window()
+                    exit_ = True
+                    pygame.quit()
+                    camera.release()
+                    break
+                if cursor.colliderect(button_r.rect):
+                    if get_data:
                         main_menu_window()
                         exit_ = True
                         pygame.quit()
-                        camera.release()
                         break
-                    if get_data:
-                        get_data = False
-
+                    if not get_data:
+                        get_data = True
+                        
 def login_window():
     global show_search, show_done, show_camera, name
     
@@ -950,7 +973,7 @@ def manage_invoices_window():
 
     pygame.quit()
 def main_menu_window():
-    global FPS, cursor, buttons_main, width, height,matrix
+    global FPS, cursor, buttons_main, width, height,matrix, name
     print(matrix)
     pygame.init()
     screen = pygame.display.set_mode((width, height))
@@ -963,7 +986,7 @@ def main_menu_window():
     logo = pygame.image.load("Images/Logo.png")
     logo = pygame.transform.scale(logo, (400, 200))
     font = pygame.font.Font("times.ttf", 30)
-    user = "Marcos"
+    user = name
 
     #Creates texts
     welcome_txt = f"Welcome, {user}"
@@ -1017,12 +1040,14 @@ def main_menu_window():
                     pygame.quit()
                     break
                 elif cursor.colliderect(bt_addUser.rect):
-                    pass
+                    register_window()
+                    exit_ = True
+                    pygame.quit()
+                    break
                 elif cursor.colliderect(bt_manageUser.rect):
                     pass
 
         
 
     pygame.quit()
-
-register_window()
+login_window()
