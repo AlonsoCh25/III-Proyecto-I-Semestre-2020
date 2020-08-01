@@ -397,17 +397,23 @@ def login_window():
 
             
         for event in pygame.event.get():
+            
             if event.type == pygame.QUIT:
                 # Exit
                 exit_ = True
                 pygame.quit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
+                
                 if cursor.colliderect(button.rect):
+                    
                     if show_camera:
+                        print("Here")
                         for i in range(1):
                             cv2.imwrite("faces_unknown/unknown"+str(i)+".png", frame_)
-                        for dirpath, dnames, fnames in os.walk("./faces_unknown"):
+                        print("TODay")
+                        for dirpath, dnames, fnames in (os.walk("./faces_unknown")):
+                            
                             for f in fnames:
                                 if f.endswith(".jpg") or f.endswith(".png"):
                                     classify_face(f)
