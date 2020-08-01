@@ -1,7 +1,7 @@
 import pygame
 from datetime import datetime
 from CLASSES import *
-
+from Login import make_invoice_window
 
 #Creation of groups and cursor
 buttons_main = pygame.sprite.Group()
@@ -203,7 +203,6 @@ def draw_matrix_invoices(y):
                         box = text_box_invoices(x, y, 150, 30, element, row - 1, colum - 1)
                         box_group_i.add(box)
                     elif colum == 4:
-                        print(x)
                         colum += 1
                         x += 150
                         bt_trash = Button_(img_trash1, img_trash2, x, y + 2, 25, 25, row - 1, colum - 1)
@@ -249,6 +248,8 @@ def manage_invoices_window():
                     archive_csv.write(matrix_invoices)
                     archive_csv.update_matrix("Invoices.csv", "w")
                     main_menu_window()
+                    exit_ = True
+                    pygame.quit()
 
         clock.tick(60)
         screen.blit(background, (0, 0))
@@ -293,6 +294,15 @@ def main_menu_window():
 
     exit_ = False
     while exit_ != True:
+        clock.tick(60)
+        cursor.update()
+        screen.blit(background, (0, 0))
+        screen.blit(welcome_txt, (10, 5))
+        screen.blit(function_txt, ((round(width/2)) - 210, 350))
+        screen.blit(date, (750, 5))
+        screen.blit(logo, (round((width/2)) - 200, 50))
+        buttons_main.update(screen, cursor)
+        pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 # Exit
@@ -305,11 +315,16 @@ def main_menu_window():
                     pygame.quit()
                     break
                 elif cursor.colliderect(bt_createInvoice.rect):
-                    pass
+                    exit_ = True
+                    pygame.quit()
+                    make_invoice_window()
+                    break
+                    
                 elif cursor.colliderect(bt_manageInvoice.rect):
                     manage_invoices_window()
                     exit_ = True
                     pygame.quit()
+                    break
                 elif cursor.colliderect(bt_report.rect):
                     pass
                 elif cursor.colliderect(bt_services.rect):
@@ -322,17 +337,6 @@ def main_menu_window():
                 elif cursor.colliderect(bt_manageUser.rect):
                     pass
 
-        clock.tick(60)
-        cursor.update()
-        screen.blit(background, (0, 0))
-        screen.blit(welcome_txt, (10, 5))
-        screen.blit(function_txt, ((round(width/2)) - 210, 350))
-        screen.blit(date, (750, 5))
-        screen.blit(logo, (round((width/2)) - 200, 50))
-        buttons_main.update(screen, cursor)
-
-        pygame.display.update()
+        
 
     pygame.quit()
-
-main_menu_window()

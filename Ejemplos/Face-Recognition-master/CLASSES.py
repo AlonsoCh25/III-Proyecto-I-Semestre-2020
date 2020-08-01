@@ -4,7 +4,6 @@ from reportlab.pdfgen.canvas import Canvas
 from datetime import datetime
 colide = False
 matrix = [["Item", "Quantity","Price","Amount"],["","","",""],["","","",""],["","","",""]]
-matrix_services = []
 
 class Cursor(pygame.Rect):
     def __init__(self):
@@ -83,6 +82,9 @@ class csv_class:
         with f:
             writer = csv.writer(f)
             writer.writerows(a)
+
+#archive_csv = csv_class("Services.csv", "rt")
+#matrix_services = archive_csv.get_matrix()
 
 class text_box(pygame.sprite.Sprite):
     def __init__(self, x,y,w,h, text):
@@ -203,7 +205,7 @@ class text_group(pygame.sprite.Sprite):
 
     def update_services(self, screen, cursor, dynamic, event):
         global matrix_services
-        
+
         pygame.init()
         font = pygame.font.Font("times.ttf", 20)
         self.txt = font.render(self.text, True, (0, 0, 0))
@@ -291,7 +293,17 @@ class pdf:
         self.canvas.save()
 
 
-archive_csv = csv_class("Services.csv", "rt")
-matrix_services = archive_csv.get_matrix()
-archive_csv = csv_class("Invoices.csv", "rt")
-matrix_invoices = archive_csv.get_matrix()
+
+#load the csv
+#archive_csv = csv_class("ScoreBoard.csv","rt")
+#matrix_csv = archive_csv.get_matrix()
+
+"""To write matrix in the variable"""
+# archivo_csv.write("Nueva matriz")
+"""To save the matrix in the csv"""
+# archivo_csv.update_matriz("matriz.csv","w")
+"""NOTE"""
+#First writes the variable and after saves the matrix in the csv
+
+#Class to know the position of the cursor
+
