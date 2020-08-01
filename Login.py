@@ -119,13 +119,14 @@ def classify_face(im):
  
     face_locations = fr.face_locations(img)
     unknown_face_encodings = fr.face_encodings(img, face_locations)
-
+    
     face_names = []
     for face_encoding in unknown_face_encodings:
         matches = fr.compare_faces(faces_encoded, face_encoding)
         face_distances = face_recognition.face_distance(faces_encoded, face_encoding)
         best_match_index = np.argmin(face_distances)
-        
+        print(best_match_index)
+        print(known_face_names)
         if matches[best_match_index]:
             name = known_face_names[best_match_index]
             print(name)
@@ -339,10 +340,10 @@ def register_window():
                     main_menu_window()
                     exit_ = True
                     pygame.quit()
-                    camera.release()
                     break
                 if cursor.colliderect(button_r.rect):
                     if get_data:
+                        camera.release()
                         main_menu_window()
                         exit_ = True
                         pygame.quit()
@@ -352,8 +353,7 @@ def register_window():
                         
 def login_window():
     global show_search, show_done, show_camera, name
-    
-    camera = cv2.VideoCapture(0)
+    camera_login = cv2.VideoCapture(0)
     pygame.init()
     pygame.display.set_caption("Login")
     weight, height = 952,768
@@ -374,9 +374,8 @@ def login_window():
     exit_ = False
     while exit_ != True:
         screen.blit(pygame.transform.scale(background,(weight,height)),(0,0))
-        ret, frame_ = camera.read()
+        ret, frame_ = camera_login.read()
         cursor.update()
-        
         if show_camera:
             frame = cv2.cvtColor(frame_, cv2.COLOR_BGR2RGB)
             frame = np.rot90(frame)
@@ -385,6 +384,7 @@ def login_window():
             button.update(screen,cursor)
             pygame.display.update()
         if not show_camera:
+            camera_login.release()
             Welcome = "Welcome " + name
             Welcome = font.render(Welcome, True, (0, 0, 0))
             screen.blit(Welcome, (250,200))
@@ -393,7 +393,6 @@ def login_window():
             exit_ = True
             pygame.quit()
             main_menu_window()
-            camera.release()
             break
 
             
