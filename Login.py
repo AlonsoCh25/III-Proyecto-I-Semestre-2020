@@ -15,6 +15,7 @@ import sys
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from time import sleep
+import webbrowser as wb
 
 pdfmetrics.registerFont(TTFont('times','times.ttf'))
 pdfmetrics.registerFont(TTFont('timesb','timesbd.ttf'))
@@ -29,11 +30,15 @@ rect_select = None
 show_search = False
 show_camera = True
 show_done = False
+
 name = "Unknown"
 
 #Creation of groups and cursor
 buttons_main = pygame.sprite.Group()
 buttons_servicesGroup = pygame.sprite.Group()
+buttons_servicesTrash = pygame.sprite.Group()
+buttons_servicesInspect = pygame.sprite.Group()
+
 buttons_box_s = pygame.sprite.Group()
 box_group_s = pygame.sprite.Group()
 buttons_invoiceGroup = pygame.sprite.Group()
@@ -419,7 +424,7 @@ def login_window():
                         pass
 
 def make_invoice_window():
-    global box_group, matrix_data, window_c,buttons, show_services,matrix_services, buttons_services, buttons_box,matrix, rect_select
+    global box_group, matrix_data, window_c,buttons, show_services,matrix_services, buttons_services, buttons_box,matrix, rect_select,matrix_invoices
     def create_pdf():
         global matrix
         ##La parte superior en y es 800
@@ -446,7 +451,7 @@ def make_invoice_window():
         n_pdf.write_string("Ship To", 400,590,"timesb",12)
         n_pdf.write_string(C_name_, 400,575,"times",12)
         n_pdf.write_string("San Jose-Costa Rica", 400,560,"times",12)
-       
+        
         colum = 0
         row_ = 0
         x = 50
@@ -480,11 +485,9 @@ def make_invoice_window():
     scroll = 10
     scroll_ = 30
     #List of the invoice numers
-    archive_csv = csv_class("Invoices.csv","rt")
-    matrix_csv = archive_csv.get_matrix()
     inv_number = 1
-    if matrix_csv[0] != []:
-        for row in matrix_csv:
+    if matrix_invoices != []:
+        for row in matrix_invoices:
             inv_number = int(row[0]) + 1
     inv_number = str(inv_number)
     
@@ -699,6 +702,16 @@ def make_invoice_window():
                             draw_matrix(screen, B_y)
                             rect_select = None
                 if cursor.colliderect(bt_check.rect):
+                    a = []
+                    a += [inv_number]
+                    a += [note_input.get_text()]
+                    a += [str(now.date())]
+                    a += [total_input.get_text()]
+                    a += [0]
+                    a += [0]
+                    matrix_invoices += [a]
+                    archive_csv.write(matrix_invoices)
+                    archive_csv.update_matrix("Invoices.csv", "w")
                     create_pdf()
                     exit_ = True
                     pygame.quit()
@@ -767,12 +780,6 @@ def make_invoice_window():
     pygame.quit()
     
 """Functions"""
-
-
-
-
-
-
 def draw_matrix_services_s(y):
     global box_group_s, matrix_services
 
@@ -879,11 +886,14 @@ def services_window():
 
 def draw_matrix_invoices(y):
     global box_group_i, matrix_invoices, buttons_invoice
-
+    archive_csv_ = csv_class("Invoices.csv", "rt")
+    matrix_invoices = archive_csv_.get_matrix()
     #Matrix of the services
     x = 0
     row = 0
     box_group_i.empty()
+    buttons_servicesTrash.empty()
+    buttons_servicesInspect.empty()
     for line in matrix_invoices:
         row +=1
         colum = 0
@@ -916,15 +926,17 @@ def draw_matrix_invoices(y):
                         colum += 1
                         x += 150
                         bt_trash = Button_(img_trash1, img_trash2, x, y + 2, 25, 25, row - 1, colum - 1)
-                        buttons_invoiceGroup.add(bt_trash)
+                        buttons_servicesTrash.add(bt_trash)
                     else:
                         colum += 1
                         x += 30
                         bt_inspect = Button_(img_inspect1, img_inspect2, x, y + 2, 25, 25, row - 1, colum - 1)
-                        buttons_invoiceGroup.add(bt_inspect)
-def manage_invoices_window():
-    global FPS, cursor, width, height, buttons_box_i, buttons_, matrix_invoices
+                        buttons_servicesInspect.add(bt_inspect)
 
+def manage_invoices_window():
+    global FPS,update, cursor, width, height, buttons_box_i, buttons_, matrix_invoices, buttons_servicesTrash, buttons_servicesInspect
+    archive_csv_ = csv_class("Invoices.csv", "rt")
+    matrix_invoices = archive_csv_.get_matrix()
     pygame.init()
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Services Window")
@@ -954,14 +966,19 @@ def manage_invoices_window():
                 pygame.quit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
+                for trash in buttons_servicesTrash:
+                    trash.update_trash(screen, cursor, event)
+                
+                for inspect in  buttons_servicesInspect:
+                    inspect.update_inspect(screen, cursor, event)
                 if cursor.colliderect(bt_return_i.rect):
                     archive_csv.write(matrix_invoices)
                     archive_csv.update_matrix("Invoices.csv", "w")
                     main_menu_window()
                     exit_ = True
                     pygame.quit()
-
-        clock.tick(60)
+        draw_matrix_invoices(210)
+        clock.tick(30)
         screen.blit(background, (0, 0))
         screen.blit(logo, (round((width / 2)) - 150, 25))
         screen.blit(services_txt, (round(width / 2 - 80), 185))
@@ -972,6 +989,10 @@ def manage_invoices_window():
         price_box.update(screen, cursor, False, 210)
         box_group_i.update(screen, cursor, False, 240)
         buttons_invoiceGroup.update(screen, cursor)
+        for trash in buttons_servicesTrash:
+            trash.update_trash(screen, cursor, None)
+        for inspect in  buttons_servicesInspect:
+            inspect.update_inspect(screen, cursor, None)
         pygame.display.update()
 
     pygame.quit()
@@ -1053,4 +1074,6 @@ def main_menu_window():
         
 
     pygame.quit()
-login_window()
+#login_window()
+manage_invoices_window()
+

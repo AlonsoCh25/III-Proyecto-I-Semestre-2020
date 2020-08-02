@@ -5,6 +5,9 @@ from datetime import datetime
 colide = False
 matrix = [["Item", "Quantity","Price","Amount"],["","","",""],["","","",""],["","","",""]]
 matrix_services = []
+update = False
+import webbrowser as wb
+from os import remove
 
 class Cursor(pygame.Rect):
     def __init__(self):
@@ -33,6 +36,7 @@ class Button(pygame.sprite.Sprite):
         screen.blit(self.image_current,self.rect)
 
 class Button_(pygame.sprite.Sprite):
+    global matrix_invoices
     def __init__(self, image1, image2, x, y,scale_x,scale_y, row, colum):
         pygame.sprite.Sprite.__init__(self)
         self.row = row
@@ -51,6 +55,42 @@ class Button_(pygame.sprite.Sprite):
             self.image_current = self.image_normal
         #screen.blit(pygame.transform.scale(self.image_current,(self.scale_x,self.scale_y)),self.rect)
         screen.blit(self.image_current,self.rect)
+        
+    def update_trash(self, screen, cursor, event):
+        global matrix_invoices
+        archive_csv_ = csv_class("Invoices.csv", "rt")
+        matrix_invoices = archive_csv_.get_matrix()
+        if event == None:
+            if cursor.colliderect(self.rect):
+                self.image_current = self.image_select
+            else:
+                self.image_current = self.image_normal
+            #screen.blit(pygame.transform.scale(self.image_current,(self.scale_x,self.scale_y)),self.rect)
+            screen.blit(self.image_current,self.rect)
+        else:
+            if cursor.colliderect(self.rect):
+                a = []
+                b = matrix_invoices[self.row][0]
+                remove(b+".pdf")
+                for l in range(len(matrix_invoices)):
+                    if l != self.row:
+                        a += [matrix_invoices[l]]
+                
+                matrix_invoices = a
+                archive_csv.write(matrix_invoices)
+                archive_csv.update_matrix("Invoices.csv", "w")
+                
+    def update_inspect(self, screen, cursor, event):
+        if event == None:
+            if cursor.colliderect(self.rect):
+                self.image_current = self.image_select
+            else:
+                self.image_current = self.image_normal
+            #screen.blit(pygame.transform.scale(self.image_current,(self.scale_x,self.scale_y)),self.rect)
+            screen.blit(self.image_current,self.rect)
+        else:
+            if cursor.colliderect(self.rect):
+                wb.open_new(r"" + matrix_invoices[self.row][0]+".pdf")
     def get_pos(self):
         return (self.row,self.colum)
         
