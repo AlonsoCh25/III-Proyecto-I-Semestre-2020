@@ -1074,6 +1074,6 @@ def main_menu_window():
         
 
     pygame.quit()
-#login_window()
-manage_invoices_window()
+login_window()
+#manage_invoices_window()
 
