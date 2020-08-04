@@ -37,6 +37,18 @@ class Button(pygame.sprite.Sprite):
         #screen.blit(pygame.transform.scale(self.image_current,(self.scale_x,self.scale_y)),self.rect)
         screen.blit(self.image_current,self.rect)
 
+    def update_inspect(self, screen, cursor, event, rep_num):
+        if event == None:
+            if cursor.colliderect(self.rect):
+                self.image_current = self.image_select
+            else:
+                self.image_current = self.image_normal
+            #screen.blit(pygame.transform.scale(self.image_current,(self.scale_x,self.scale_y)),self.rect)
+            screen.blit(self.image_current,self.rect)
+        else:
+            if cursor.colliderect(self.rect):
+                wb.open_new(f"Report {rep_num}.pdf")
+
 class Button_(pygame.sprite.Sprite):
     global matrix_invoices
     def __init__(self, image1, image2, x, y,scale_x,scale_y, row, colum):

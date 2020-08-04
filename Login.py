@@ -737,7 +737,7 @@ def make_invoice_window():
                     a += [inv_number]
                     a += [note_input.get_text()]
                     a += [str(now.date())]
-                    a += [round(total_input.get_text())]
+                    a += [round(float(total_input.get_text()))]
                     a += [round(float(sub_input.get_text()) * float(int(tax_input.get_text())/100))]
                     a += [0]
                     a += [0]
@@ -1096,7 +1096,9 @@ def main_menu_window():
                     pygame.quit()
                     break
                 elif cursor.colliderect(bt_report.rect):
-                    pass
+                    make_report_window()
+                    exit_ = True
+                    pygame.quit()
                 elif cursor.colliderect(bt_services.rect):
                     services_window()
                     exit_ = True
@@ -1170,7 +1172,7 @@ def report_pdf_creator(matrix_report):
         row_ += 1
         y -= 15
 
-    n_pdf.write_string((f"Total        {amounts}          {taxes}"), 400, y - 15, "times", 12)
+    n_pdf.write_string((f"Total        {round(amounts)}          {round(taxes)}"), 400, y - 15, "times", 12)
 
     n_pdf.save()
 
@@ -1384,6 +1386,7 @@ def make_report_window():
                     else:
                         matrix_report = matrix_invoices
                     report_pdf_creator(matrix_report)
+                    bt_check_r.update_inspect(screen, cursor, event, rep_number)
                     main_menu_window()
                     exit_ = True
                     pygame.quit()
