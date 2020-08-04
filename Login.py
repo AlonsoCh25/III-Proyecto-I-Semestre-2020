@@ -20,13 +20,28 @@ import webbrowser as wb
 pdfmetrics.registerFont(TTFont('times','times.ttf'))
 pdfmetrics.registerFont(TTFont('timesb','timesbd.ttf'))
 box_group = pygame.sprite.Group()
+box_groupr = pygame.sprite.Group()
 buttons = []
+buttonsr = []
+
+
+pdfmetrics.registerFont(TTFont('times','times.ttf'))
+pdfmetrics.registerFont(TTFont('timesb','timesbd.ttf'))
+box_group = pygame.sprite.Group()
+box_groupr = pygame.sprite.Group()
+buttons = []
+buttonsr = []
 
 
 buttons_box = pygame.sprite.Group()
+buttons_boxr = pygame.sprite.Group()
 buttons_services = []
+buttons_report = []
+buttons_dates = []
 show_services = False
+show_dates = False
 rect_select = None
+rect_select2 = None
 show_search = False
 show_camera = True
 show_done = False
@@ -38,6 +53,7 @@ buttons_main = pygame.sprite.Group()
 buttons_servicesGroup = pygame.sprite.Group()
 buttons_servicesTrash = pygame.sprite.Group()
 buttons_servicesInspect = pygame.sprite.Group()
+buttons_reportGroup = pygame.sprite.Group()
 
 buttons_box_s = pygame.sprite.Group()
 box_group_s = pygame.sprite.Group()
@@ -74,6 +90,9 @@ img_trash1 = pygame.image.load("Images/bt_trash.png")
 img_trash2 = pygame.image.load("Images/bt_trash2.png")
 img_inspect1 = pygame.image.load("Images/bt_inspect.png")
 img_inspect2 = pygame.image.load("Images/bt_inspect2.png")
+img_check1 = pygame.image.load("Images/check.png")
+img_check2 = pygame.image.load("Images/check_1.png")
+
 
 bt_createInvoice = Button(img_bt_createPDF1, img_bt_createPDF2, (width/4) + 50, 400, scale_x, scale_y)
 bt_manageInvoice = Button(img_bt_managerPDF1, img_bt_managerPDF2, (width/4) + 50 , 550, scale_x, scale_y)
@@ -91,6 +110,18 @@ buttons_servicesGroup.add(bt_return_s, bt_more_s, bt_less_s)
 
 bt_return_i = Button(img_bt_return1, img_bt_return2, width - 160 , 10, scale_x, scale_y)
 buttons_invoiceGroup.add(bt_return_i)
+
+bt_return_r = Button(img_bt_return1, img_bt_return2, width - 110 , 10, scale_x, scale_y)
+bt_check_r = Button(img_check1, img_check2, 415, 700, 60, 60)
+buttons_reportGroup.add(bt_return_r, bt_check_r)
+
+archive_csv = csv_class("Invoices.csv", "rt")
+matrix_invoices = archive_csv.get_matrix()
+
+archive_csv = csv_class("Reports.csv", "rt")
+matrix_reports = archive_csv.get_matrix()
+
+rep_number = str(0)
 
 """Funtions for Face Recognition"""
 
@@ -430,7 +461,7 @@ def make_invoice_window():
         ##La parte superior en y es 800
         ##El limite izquierdo en y es 50
         ##El limite derecho en y es 500
-        n_pdf = pdf(inv_number, "logo.png")
+        n_pdf = pdf("Invoice " + str(inv_number), "logo.png")
         n_pdf.write_string("3C Landscaping services", 50,650,"timesb",12)
         
         txt_data = ""
@@ -1074,6 +1105,285 @@ def main_menu_window():
         
 
     pygame.quit()
-login_window()
+def report_pdf_creator(matrix_report):
+    global rep_number
+
+    matrix_pdf = matrix_report
+    ##La parte superior en y es 800
+    ##El limite izquierdo en y es 50
+    ##El limite derecho en y es 500
+    n_pdf = pdf("Report " + str(rep_number), "logo.png")
+    n_pdf.write_string("3C Landscaping services", 50, 650, "timesb", 12)
+
+    txt_data = ""
+    for row in matrix_data:
+        for element in row:
+            txt_data += str(element)
+            txt_data += "\n"
+    n_pdf.write_text(txt_data, 50, 635, "times", 12)
+    txt_data = ""
+    n_pdf.write_string("3C Landscaping services", 50, 650, "timesb", 12)
+    n_pdf.write_string(("Report #" + rep_number), 400, 650, "times", 12)
+    n_pdf.write_string(("Invoice #"), 50, 555, "times", 12)
+    n_pdf.write_string(("Invoice Detail"), 125, 555, "times", 12)
+    n_pdf.write_string(("Invoice Date"), 370, 555, "times", 12)
+    n_pdf.write_string(("Amount"), 450, 555, "times", 12)
+    n_pdf.write_string(("Taxes"), 525, 555, "times", 12)
+
+    colum = 0
+    row_ = 0
+    y = 525
+    amounts = 0
+    taxes = 0
+    for row in matrix_pdf:
+        colum = 0
+        x = 50
+        for element in row:
+            if row.index(element) == 0:
+                n_pdf.write_string(element, x, y, "times", 12)
+                colum += 1
+                x += 75
+            elif row.index(element) == 1:
+                n_pdf.write_string(element, x, y, "times", 12)
+                colum += 1
+                x += 245
+            elif row.index(element) == 2:
+                n_pdf.write_string(element, x, y, "times", 12)
+                colum += 1
+                x += 80
+            else:
+                n_pdf.write_string(element, x, y, "times", 12)
+                colum += 1
+                x += 75
+            if row.index(element) == 3:
+                amounts += float(element)
+            elif row.index(element) == 4:
+                taxes += float(element)
+        row_ += 1
+        y -= 15
+
+    n_pdf.write_string((f"Total        {amounts}          {taxes}"), 400, y - 15, "times", 12)
+
+    n_pdf.save()
+
+def draw_matrix_date(y):
+    global box_groupr, matrix_dates2, buttonsr
+
+    trans = pygame.image.load("Images/transparent.png")
+    # Matrix of the items
+    x = 0
+    row = 0
+    box_groupr.empty()
+    buttonsr = []
+    for line in matrix_dates2:
+        row += 1
+        colum = 0
+        x = 0
+        y += 30
+        if True:
+            for element in line:
+                if colum == 0:
+                    colum += 1
+                    x += round(width/2) - 75
+                    box = text_group(x, y, 150, 30, element, row - 1, colum - 1)
+                    box_groupr.add(box)
+                    if row - 1 == 0:
+                        bt_transparent = Button_(trans, trans, x, y, 150, 30, row - 1, colum - 1)
+                        buttonsr += [bt_transparent]
+
+def draw_matrix_dates(y):
+    global buttons_report, buttons_boxr, show_dates, matrix_dates
+
+    check = pygame.image.load("Images/check_s.png")
+    check_s = pygame.image.load("Images/check_s_.png")
+    # Matrix of the items
+    row = 0
+    y = y + 30
+    colum = 0
+    x = round(width / 2) - 75
+    buttons_report = []
+    matrix_dates = [['Last day'], ['Last week'], ['Last month'], ['Last year']]
+    buttons_boxr.empty()
+
+    for line in matrix_dates:
+        txt = ""
+        for element in line:
+            txt += element
+        bt_transparent = Button_(check, check_s, x + 155, y, 30, 30, row, colum)
+        buttons_report += [bt_transparent]
+        box = text_group(x, y, 150, 30, txt, row, colum)
+        buttons_boxr.add(box)
+        txt = " "
+        y += 30
+        row += 1
+        colum += 1
+
+def make_report_window():
+    global box_groupr, matrix_data, buttonsr, show_dates, matrix_dates, buttons_report, buttons_boxr, matrix_dates, matrix_dates2, rect_select2, rep_number, matrix_reports, matrix_invoices
+
+    # Settings of the screen
+    pygame.init()
+    weight, height = 952, 768
+    screen = pygame.display.set_mode((weight, height))
+
+    # Caption
+    pygame.display.set_caption("Make report")
+
+    # Set initial clock
+    clock = pygame.time.Clock()
+
+    # Font
+    font = pygame.font.Font("times.ttf", 20)
+
+    # Images of the screen
+    background = pygame.image.load("Images/background.png")
+    logo = pygame.image.load("logo.png")
+
+
+    cursor = Cursor()
+
+    # Position in y of the blits
+
+
+    # Draw the matrix
+    if not show_dates:
+        buttons_boxr.empty()
+        draw_matrix_date(425)
+
+    rep_number = 1
+    if matrix_reports != []:
+        for row in matrix_reports:
+            rep_number = int(row[0]) + 1
+    rep_number = str(rep_number)
+
+    a = []
+
+    report_txt = "Create a report for the company's sales"
+    report_txt = font.render(report_txt, True, (0, 0, 0))
+    date_txt = "Choose a date range to create the report"
+    date_txt = font.render(date_txt, True, (0, 0, 0))
+
+    now = datetime.now()
+    now.date()
+
+    # While of the loop
+    exit_ = False
+    while exit_ != True:
+
+        clock.tick(30)
+        cursor.update()
+        screen.blit(pygame.transform.scale(background, (weight, height)), (0, 0))
+        screen.blit(pygame.transform.scale(logo, (400, 200)), (250, 50))
+        buttons_reportGroup.update(screen, cursor)
+        screen.blit(report_txt, (round(width / 2) - 150, 300))
+        screen.blit(date_txt, (round(width / 2) - 155, 400))
+
+        if not show_dates:
+            box_groupr.update(screen, cursor, False, None)
+            buttons_boxr.empty()
+            buttons_report = []
+            for button in buttonsr:
+                button.update(screen, cursor)
+
+        if show_dates:
+            box_groupr.empty()
+            buttonsr = []
+            buttons_boxr.update(screen, cursor, False, None)
+            for button in buttons_report:
+                button.update(screen, cursor)
+
+        # Update Display
+        pygame.display.update()
+        for event in pygame.event.get():
+            if not show_dates:
+                box_groupr.update(screen, cursor, False, event)
+            if show_dates:
+                buttons_boxr.update(screen, cursor, False, event)
+
+            if event.type == pygame.QUIT:
+                # Exit
+                exit_ = True
+                pygame.quit()
+                break
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if not show_dates:
+                    for button in buttonsr:
+                        if cursor.colliderect(button.rect):
+                            rect_select2 = button.get_pos()
+                            show_dates = True
+                            draw_matrix_dates(425)
+
+                if show_dates:
+                    for button in buttons_report:
+                        if cursor.colliderect(button.rect):
+                            rect = button.get_pos()
+                            matrix_dates2[rect_select2[0]][0] = matrix_dates[rect[0]][0]
+                            show_dates = False
+                            draw_matrix_date(425)
+                            rect_select2 = None
+                if cursor.colliderect(bt_return_r.rect):
+                    main_menu_window()
+                    exit_ = True
+                    pygame.quit()
+                if cursor.colliderect(bt_check_r.rect):
+                    a += [rep_number]
+                    matrix_reports += [a]
+                    archive_csv.write(matrix_reports)
+                    archive_csv.update_matrix("Reports.csv", "w")
+                    matrix_report = []
+                    day = now.day
+                    month = now.month
+                    year = now.year
+                    if matrix_dates2[0][0] == "Last day":
+                        for row in matrix_invoices:
+                            if str(row[2]) == f"{year}-{month:02d}-{day:02d}":
+                                matrix_report += [row]
+
+                    elif matrix_dates2[0][0] == "Last week":
+                        for row in matrix_invoices:
+                            if str(f"{year}-{month:02d}") == str(row[2])[:7] and int((row[2])[8:10]) > 7:
+                                if day - 7 <= int((row[2])[8:10]) <= day:
+                                    matrix_report += [row]
+                                    report_pdf_creator(matrix_report)
+                            elif str(f"{year}-{month:02d}") == str(row[2])[:7] and int((row[2])[8:10]) <= 7:
+                                resta = day - 7
+                                month2 = month - 1
+                                day2 = 31
+                                day2 += resta
+                                if month2 <= int((row[2])[5:7]) and day2 <= 31:
+                                    matrix_report += [row]
+                                elif month >= int((row[2])[5:7]) and day >= int((row[2])[8:10]):
+                                    matrix_report += [row]
+
+                    elif matrix_dates2[0][0] == "Last month":
+                        for row in matrix_invoices:
+                            if year == int((row[2])[:4]):
+                                month2 = month - 1
+                                if 0 <= int((row[2])[8:10]) <= day and month == int((row[2])[5:7]):
+                                    matrix_report += [row]
+                                if day <= int((row[2])[8:10]) <= 31 and month2 == int((row[2])[5:7]):
+                                    matrix_report += [row]
+                    elif matrix_dates2[0][0] == "Last year":
+                        for row in matrix_invoices:
+                            year2 = year - 1
+                            if year == int((row[2])[:4]):
+                                if 0 <= int((row[2])[8:10]) <= day and 0 <= int((row[2])[5:7]) <= month:
+                                    matrix_report += [row]
+                            elif year2 == int((row[2])[:4]):
+                               if day <= int((row[2])[8:10]) <= 31 and month <= int((row[2])[5:7]) <= 12:
+                                    matrix_report += [row]
+                    else:
+                        matrix_report = matrix_invoices
+                    report_pdf_creator(matrix_report)
+                    main_menu_window()
+                    exit_ = True
+                    pygame.quit()
+
+
+    pygame.quit()
+
+#login_window()
+main_menu_window()
 #manage_invoices_window()
 

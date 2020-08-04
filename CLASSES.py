@@ -5,6 +5,8 @@ from datetime import datetime
 colide = False
 matrix = [["Item", "Quantity","Price","Amount"],["","","",""],["","","",""],["","","",""]]
 matrix_services = []
+matrix_dates = []
+matrix_dates2 = [['']]
 update = False
 import webbrowser as wb
 from os import remove
