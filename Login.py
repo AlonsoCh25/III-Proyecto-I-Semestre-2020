@@ -737,7 +737,8 @@ def make_invoice_window():
                     a += [inv_number]
                     a += [note_input.get_text()]
                     a += [str(now.date())]
-                    a += [total_input.get_text()]
+                    a += [round(total_input.get_text())]
+                    a += [round(float(sub_input.get_text()) * float(int(tax_input.get_text())/100))]
                     a += [0]
                     a += [0]
                     matrix_invoices += [a]
@@ -934,7 +935,7 @@ def draw_matrix_invoices(y):
             for element in line:
                 if colum == 0:
                     colum += 1
-                    x += 50
+                    x += 15
                     box = text_box_invoices(x,y,150,30, element, row-1, colum-1)
                     box_group_i.add(box)
                 else:
@@ -946,16 +947,21 @@ def draw_matrix_invoices(y):
                     elif colum == 2:
                         colum += 1
                         x += 300
-                        box = text_box_invoices(x,y,150,30, element, row-1, colum-1)
+                        box = text_box_invoices(x,y,125,30, element, row-1, colum-1)
                         box_group_i.add(box)
                     elif colum == 3:
                         colum += 1
-                        x += 150
-                        box = text_box_invoices(x, y, 150, 30, element, row - 1, colum - 1)
+                        x += 125
+                        box = text_box_invoices(x, y, 125, 30, element, row - 1, colum - 1)
                         box_group_i.add(box)
                     elif colum == 4:
                         colum += 1
-                        x += 150
+                        x += 125
+                        box = text_box_invoices(x, y, 125, 30, element, row - 1, colum - 1)
+                        box_group_i.add(box)
+                    elif colum == 5:
+                        colum += 1
+                        x += 125
                         bt_trash = Button_(img_trash1, img_trash2, x, y + 2, 25, 25, row - 1, colum - 1)
                         buttons_servicesTrash.add(bt_trash)
                     else:
@@ -979,10 +985,11 @@ def manage_invoices_window():
     font = pygame.font.Font("times.ttf", 20)
 
     draw_matrix_invoices(210)
-    number_box = text_box(50, 210, 150, 30, "Invoice Number")
-    detail_box = text_box(200, 210, 300, 30, "Invoice Detail")
-    date_box = text_box(500, 210, 150, 30, "Invoice Date")
-    price_box = text_box(650, 210, 150, 30, "Invoice Total")
+    number_box = text_box(15, 210, 150, 30, "Invoice Number")
+    detail_box = text_box(165, 210, 300, 30, "Invoice Detail")
+    date_box = text_box(465, 210, 125, 30, "Invoice Date")
+    price_box = text_box(590, 210, 125, 30, "Invoice Total")
+    tax_box = text_box(715, 210, 125, 30, "Invoice Taxes")
 
     services_txt = "Invoices Manager"
     services_txt = font.render(services_txt, True, (0, 0, 0))
@@ -1018,6 +1025,7 @@ def manage_invoices_window():
         detail_box.update(screen, cursor, False, 210)
         date_box.update(screen, cursor, False, 210)
         price_box.update(screen, cursor, False, 210)
+        tax_box.update(screen, cursor, False, 210)
         box_group_i.update(screen, cursor, False, 240)
         buttons_invoiceGroup.update(screen, cursor)
         for trash in buttons_servicesTrash:
@@ -1384,6 +1392,7 @@ def make_report_window():
     pygame.quit()
 
 #login_window()
-main_menu_window()
-#manage_invoices_window()
+#main_menu_window()
+manage_invoices_window()
+#make_invoice_window()
 
