@@ -456,7 +456,7 @@ def login_window():
                         pass
 
 def make_invoice_window():
-    global box_group, matrix_data, window_c,buttons, show_services,matrix_services, buttons_services, buttons_box,matrix, rect_select,matrix_invoices
+    global name, box_group,matrix_customer, matrix_data, window_c,buttons, show_services,matrix_services, buttons_services, buttons_box,matrix, rect_select,matrix_invoices
     def create_pdf():
         global matrix
         ##La parte superior en y es 800
@@ -532,7 +532,7 @@ def make_invoice_window():
     d_y = 350
     due_input = text_box(645,d_y,140,25, str(m_days.date()))
     n_y = 400
-    note_input = text_box(150,n_y,600,30, "[Add a note or instruction for your customer]")
+    note_input = text_box(150,n_y,600,30, "[Add a note]")
 
     #Caption
     pygame.display.set_caption("Make Invoice")
@@ -570,21 +570,27 @@ def make_invoice_window():
     bt_check = Button(check,check_1,470,700,60,60)
     bt_up = Button(arrow_up,arrow_u,900,0,40,40)
     bt_down = Button(arrow_down,arrow_d,900,720,40,40)
-    
-    
+
+    #Load the customers info
+    if name != "Unknown":
+        for customer in matrix_customer:
+            if customer[0] == name:
+                C_name_ = customer[1]
+                C_email_ = customer[4]
+                C_addres = customer[5]
+    if name == "Unknown":
+        C_name_ = "Unknown"
+        C_email_ = "Unknown"
+        C_addres = "Unknown"
     
     #permanent text
     Inv_d = "Invoice For"
     Inv_d = font_n.render(Inv_d, True, (0, 0, 0))
-
-    C_name_ = "[Customer Name]"
+    
     C_name = font.render(C_name_, True, (0, 0, 0))
 
-    C_email_ = "[Customer Email]"
     C_email = font.render(C_email_, True, (0, 0, 0))
 
-    C_addres = "[Customer Addres]"
-    
     Inv_n = "Invoice Number: " + inv_number
     Inv_n = font_n.render(Inv_n, True, (0, 0, 0))
 
@@ -1400,8 +1406,8 @@ def make_report_window():
 
     pygame.quit()
 
-#login_window()
-main_menu_window()
+login_window()
+#main_menu_window()
 #manage_invoices_window()
 #make_invoice_window()
 
