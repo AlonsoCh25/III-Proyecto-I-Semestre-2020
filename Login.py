@@ -519,7 +519,7 @@ def make_invoice_window():
     scroll_ = 30
     #List of the invoice numers
     inv_number = 1
-    if matrix_invoices != []:
+    if matrix_invoices != [[]] and matrix_invoices != []:
         for row in matrix_invoices:
             inv_number = int(row[0]) + 1
     inv_number = str(inv_number)
@@ -1401,7 +1401,7 @@ def make_report_window():
     pygame.quit()
 
 #login_window()
-#main_menu_window()
-manage_invoices_window()
+main_menu_window()
+#manage_invoices_window()
 #make_invoice_window()
 
