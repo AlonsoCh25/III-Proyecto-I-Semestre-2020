@@ -16,6 +16,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from time import sleep
 import webbrowser as wb
+from datetime import timedelta
 
 pdfmetrics.registerFont(TTFont('times','times.ttf'))
 pdfmetrics.registerFont(TTFont('timesb','timesbd.ttf'))
@@ -461,7 +462,7 @@ def make_invoice_window():
         ##La parte superior en y es 800
         ##El limite izquierdo en y es 50
         ##El limite derecho en y es 500
-        n_pdf = pdf("Invoice " + str(inv_number), "logo.png")
+        n_pdf = pdf("invoices\Invoice " + str(inv_number), "logo.png")
         n_pdf.write_string("3C Landscaping services", 50,650,"timesb",12)
         
         txt_data = ""
@@ -505,7 +506,8 @@ def make_invoice_window():
 
         n_pdf.write_string("    Subtotal " + sub_input.get_text(), 475,y-15,"times",12)
         n_pdf.write_string("        Taxes " + tax_input.get_text()+"%", 475,y-30,"times",12)
-        n_pdf.write_string("         Total " + total_input.get_text(), 475,y-45,"times",12)
+        n_pdf.write_string("    Discount " + discount_input.get_text()+"%", 475,y-45,"times",12)
+        n_pdf.write_string("         Total " + total_input.get_text(), 475,y-60,"times",12)
         n_pdf.save()
         matrix = [["Item", "Quantity","Price","Amount"],["","","",""],["","","",""],["","","",""]]
         main_menu_window()
@@ -521,18 +523,16 @@ def make_invoice_window():
         for row in matrix_invoices:
             inv_number = int(row[0]) + 1
     inv_number = str(inv_number)
+    #Time
+    m_days = datetime.now() + timedelta(days=3)
+    now = datetime.now()
+    now.date()
     
     #Text input
     d_y = 350
-    due_input = text_box(645,d_y,140,25, "")
+    due_input = text_box(645,d_y,140,25, str(m_days.date()))
     n_y = 400
     note_input = text_box(150,n_y,600,30, "[Add a note or instruction for your customer]")
-    
-
-    #Time
-    now = datetime.now()
-    now.date()
-
 
     #Caption
     pygame.display.set_caption("Make Invoice")
@@ -602,6 +602,9 @@ def make_invoice_window():
 
     Total = "Total: "
     Total = font.render(Total, True, (0, 0, 0))
+
+    discount = "Discount: "
+    discount = font.render(discount, True, (0, 0, 0))
     
     #Position in y of the blits
     Inv_y = 300
@@ -615,7 +618,8 @@ def make_invoice_window():
     To_y = 625
     sub_input = text_box(660,S_y,90,25, "")
     tax_input = text_box(660,T_y,90,25, "")
-    total_input = text_box(660,T_y,90,25, "")
+    total_input = text_box(660,T_y+25,90,25, "")
+    discount_input = text_box(660,T_y,90,25, "")
     #Draw the matrix
     if not show_services:
         buttons_box.empty()
@@ -646,10 +650,12 @@ def make_invoice_window():
 
             screen.blit(Sub,(585,S_y))
             screen.blit(Tax,(622,T_y))
-            screen.blit(Total,(610,To_y))
+            screen.blit(discount,(580,To_y))
+            screen.blit(Total,(610,To_y+25))
             sub_input.update(screen,cursor,False,S_y)
             tax_input.update(screen,cursor,False,T_y)
-            total_input.update(screen,cursor,False,To_y)
+            discount_input.update(screen,cursor,False,To_y)
+            total_input.update(screen,cursor,False,To_y+25)
             bt_more.update(screen,cursor)
             bt_less.update(screen,cursor)
             bt_check.update(screen, cursor)
@@ -702,6 +708,7 @@ def make_invoice_window():
             note_input.text_update(event)
             sub_input.text_update(event)
             tax_input.text_update(event)
+            discount_input.text_update(event)
             if not show_services:
                 box_group.update(screen, cursor, False, event)
                 
@@ -802,11 +809,10 @@ def make_invoice_window():
                 if cursor.colliderect(bt_equal.rect):
                     sub_input.edit_text(str(sub_total))
                     a = tax_input.get_text()
+                    b = discount_input.get_text()
                     draw_matrix(screen, B_y)
                     if a != "":
-                        print(a)
-                        print(sub_total)
-                        to = sub_total+((int(a)/100)*sub_total)
+                        to = sub_total+(((int(a)/100)*sub_total)-(sub_total*(int(b)/100)))
                         total_input.edit_text(str(to))
     
     pygame.quit()
@@ -1122,7 +1128,7 @@ def report_pdf_creator(matrix_report):
     ##La parte superior en y es 800
     ##El limite izquierdo en y es 50
     ##El limite derecho en y es 500
-    n_pdf = pdf("Report " + str(rep_number), "logo.png")
+    n_pdf = pdf("Reports/Report " + str(rep_number), "logo.png")
     n_pdf.write_string("3C Landscaping services", 50, 650, "timesb", 12)
 
     txt_data = ""

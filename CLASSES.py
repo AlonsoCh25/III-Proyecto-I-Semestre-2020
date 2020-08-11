@@ -47,7 +47,7 @@ class Button(pygame.sprite.Sprite):
             screen.blit(self.image_current,self.rect)
         else:
             if cursor.colliderect(self.rect):
-                wb.open_new(f"Report {rep_num}.pdf")
+                wb.open_new(f"Reports\Report {rep_num}.pdf")
 
 class Button_(pygame.sprite.Sprite):
     global matrix_invoices
@@ -85,7 +85,7 @@ class Button_(pygame.sprite.Sprite):
             if cursor.colliderect(self.rect):
                 a = []
                 b = matrix_invoices[self.row][0]
-                remove(f"Invoice {b}.pdf")
+                remove(f"invoices\Invoice " +str(b)+".pdf")
                 for l in range(len(matrix_invoices)):
                     if l != self.row:
                         a += [matrix_invoices[l]]
@@ -104,7 +104,7 @@ class Button_(pygame.sprite.Sprite):
             screen.blit(self.image_current,self.rect)
         else:
             if cursor.colliderect(self.rect):
-                wb.open_new(f"Invoice {matrix_invoices[self.row][0]}.pdf")
+                wb.open_new(f"invoices\Invoice " +str(matrix_invoices[self.row][0])+".pdf")
     def get_pos(self):
         return (self.row,self.colum)
         
