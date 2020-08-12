@@ -188,6 +188,7 @@ class text_box_invoices(pygame.sprite.Sprite):
         self.row = row
         self.column = column
         self.y = y
+        self.x = x
         self.input = pygame.Rect(x,self.y,w,h)
         self.h = h
         self.w = w
@@ -205,8 +206,9 @@ class text_box_invoices(pygame.sprite.Sprite):
         if dynamic:
             width = max(150, self.txt.get_width() + 10)
             self.input.w = width
+        #self.input = pygame.Rect(self.x,y,self.w,self.h)
         pygame.draw.rect(screen, self.color, self.input, 1)
-        screen.blit(self.txt, (self.input.x + 2, self.input.y + 1))
+        screen.blit(self.txt, (self.input.x + 2, self.y + 1))
 
 class text_group(pygame.sprite.Sprite):
     global matrix
